@@ -5,6 +5,7 @@ import time
 import os
 import shutil
 import traceback
+import subprocess
 
 kivy.require('1.8.0')
 from kivy.app import App
@@ -46,7 +47,7 @@ from designer.helper_functions import get_kivy_designer_dir
 from designer.new_dialog import NewProjectDialog, NEW_PROJECTS
 from designer.eventviewer import EventViewer
 from designer.uix.designer_action_items import DesignerActionButton
-from designer.help_dialog import HelpDialog, AboutDialog
+from designer.help_dialog import HelpDialog, AboutDialog, BuildozerErrorDialog
 
 NEW_PROJECT_DIR_NAME = 'new_proj'
 NEW_TEMPLATES_DIR = 'new_templates'
@@ -450,6 +451,43 @@ class Designer(FloatLayout):
 
         shutil.copy(os.path.join(templates_dir, kv_file),
                     os.path.join(new_proj_dir, "main.kv"))
+
+        buildozer_path = self.designer_settings.config_parser.getdefault(
+                                            'global', 'buildozer_path', '')
+        create_buildozer_prj = self.designer_settings.config_parser.getdefault(
+                                            'global', 'create_buildozer_prj', False)
+        if create_buildozer_prj:
+            has_error = None
+            if len(buildozer_path) == 0:
+                if buildozer_path == "": #try to find buildozer in the first execution if its not configured
+                    self.config_parser.set('global', 'buildozer_path',
+                                        find_executable('buildozer'))
+                    self.config_parser.write()
+                    buildozer_path = self.designer_settings.config_parser.getdefault(
+                                            'global', 'buildozer_path', '')
+
+            if len(buildozer_path) > 0: #if buildozer is configured
+                try:
+                    subprocess.call([buildozer_path+"awe", "init"], cwd=new_proj_dir)
+                except OSError:
+                    has_error = "Cannot run buildozer. Check if the path is correct."
+                except Exception as e:
+                    has_error = e.message if e.message else 'Unknown error.'
+            else:
+                has_error = 'Please, add the Buildozer path to Kivy Designer settings'
+
+            if has_error:
+                self.error_dialog = BuildozerErrorDialog()
+                self.buildozer_popup = Popup(title="Error with Buildozer",
+                            content=self.error_dialog,
+                            size_hint=(.5, .5),
+                            auto_dismiss=False)
+                self.buildozer_popup.open()
+
+                self.error_dialog.bind(on_cancel=self.buildozer_popup.dismiss)
+
+
+
 
         self.ui_creator.playground.sandbox.error_active = True
         with self.ui_creator.playground.sandbox:

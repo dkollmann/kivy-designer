@@ -2,7 +2,7 @@ import os
 import os.path
 import shutil
 import sys
-
+from distutils.spawn import find_executable
 from kivy.properties import ObjectProperty
 from kivy.config import ConfigParser
 from kivy.uix.settings import Settings, SettingTitle
@@ -69,6 +69,14 @@ class DesignerSettings(Settings):
         if path == "":
             self.config_parser.set('global', 'python_shell_path',
                                    sys.executable)
+            self.config_parser.write()
+
+        buildozer_path = self.config_parser.getdefault(
+            'global', 'buildozer_path', '')
+
+        if buildozer_path == "":
+            self.config_parser.set('global', 'buildozer_path',
+                                        find_executable('buildozer'))
             self.config_parser.write()
 
     def on_config_change(self, *args):

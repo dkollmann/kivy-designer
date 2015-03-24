@@ -6,6 +6,18 @@
         "key": "python_shell_path"
     },
     {
+        "type": "string",
+        "title": "Buildozer Path",
+        "section": "global",
+        "key": "buildozer_path"
+    },
+    {
+        "type": "bool",
+        "title": "Create buildozer.spec Automatically",
+        "section": "global",
+        "key": "create_buildozer_prj"
+    },
+    {
         "type": "bool",
         "title": "Reload KV Automatically",
         "section": "global",

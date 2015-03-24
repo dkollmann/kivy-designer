@@ -31,3 +31,16 @@ class AboutDialog(BoxLayout):
         '''Default handler for 'on_cancel' event
         '''
         pass
+
+
+class BuildozerErrorDialog(BoxLayout):
+    '''BuildozerErrorDialog, to display any error while creating a buildozer.spec file.
+       It emits 'on_cancel' event when 'Cancel' button is released.
+    '''
+
+    __events__ = ('on_cancel',)
+
+    def on_cancel(self, *args):
+        '''Default handler for 'on_cancel' event
+        '''
+        pass

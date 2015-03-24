@@ -57,6 +57,17 @@
         size: '44pt', '22pt'
         on_release: root.dispatch('on_cancel')
 
+<BuildozerErrorDialog>:
+    Label:
+        text: 'Kivy Designer'
+        id: txt
+        
+    Button:
+        text: 'Close'
+        size_hint: None, None
+        size: '44pt', '22pt'
+        on_release: root.dispatch('on_cancel')
+
 
 <MenuHeader>
     color: (1, 1, 1, 1) if self.state == 'normal' else (0, 0, 0, 1)
