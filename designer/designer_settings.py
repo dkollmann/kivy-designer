@@ -3,6 +3,7 @@ import os.path
 import shutil
 import sys
 from distutils.spawn import find_executable
+
 from kivy.properties import ObjectProperty
 from kivy.config import ConfigParser
 from kivy.uix.settings import Settings, SettingTitle
