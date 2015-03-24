@@ -60,8 +60,6 @@ class DesignerSettings(Settings):
 
         self.config_parser.read(DESIGNER_CONFIG)
         self.config_parser.upgrade(DEFAULT_CONFIG)
-        self.add_json_panel('Kivy Designer Settings', self.config_parser,
-                            os.path.join(_dir, 'designer', 'settings', 'designer_settings.json'))
 
         path = self.config_parser.getdefault(
             'global', 'python_shell_path', '')
@@ -78,6 +76,9 @@ class DesignerSettings(Settings):
             self.config_parser.set('global', 'buildozer_path',
                                         find_executable('buildozer'))
             self.config_parser.write()
+
+        self.add_json_panel('Kivy Designer Settings', self.config_parser,
+                            os.path.join(_dir, 'designer', 'settings', 'designer_settings.json'))
 
     def on_config_change(self, *args):
         '''This function is default handler of on_config_change event.

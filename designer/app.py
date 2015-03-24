@@ -6,6 +6,7 @@ import os
 import shutil
 import traceback
 import subprocess
+import distutils.spawn
 
 kivy.require('1.8.0')
 from kivy.app import App
@@ -460,15 +461,15 @@ class Designer(FloatLayout):
             has_error = None
             if len(buildozer_path) == 0:
                 if buildozer_path == "": #try to find buildozer in the first execution if its not configured
-                    self.config_parser.set('global', 'buildozer_path',
-                                        find_executable('buildozer'))
-                    self.config_parser.write()
+                    self.designer_settings.config_parser.set('global', 'buildozer_path',
+                                        distutils.spawn.find_executable('buildozer'))
+                    self.designer_settings.config_parser.write()
                     buildozer_path = self.designer_settings.config_parser.getdefault(
                                             'global', 'buildozer_path', '')
 
             if len(buildozer_path) > 0: #if buildozer is configured
                 try:
-                    subprocess.call([buildozer_path+"awe", "init"], cwd=new_proj_dir)
+                    subprocess.call([buildozer_path, "init"], cwd=new_proj_dir)
                 except OSError:
                     has_error = "Cannot run buildozer. Check if the path is correct."
                 except Exception as e:
@@ -478,6 +479,7 @@ class Designer(FloatLayout):
 
             if has_error:
                 self.error_dialog = BuildozerErrorDialog()
+                self.error_dialog.ids.txt.text = "Error while trying to create buildozer.spec file. \nError message:" + has_error
                 self.buildozer_popup = Popup(title="Error with Buildozer",
                             content=self.error_dialog,
                             size_hint=(.5, .5),
