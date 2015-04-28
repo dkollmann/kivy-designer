@@ -9,7 +9,7 @@ title:  "GSoC Kivy Designer"
   <ul class="posts noList">
     {% for post in paginator.posts %}
       <li>
-        <span class="date">{{ post.date | date: '%B %d, %Y' }}</span>
+        <span class="date">{{ post.date | date: '%B %d, %Y' }} posted by <a href="{{ site.baseurl }}/contact.html"> Aron Bordin</span>
         <h3><a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h3>
         <p class="description">{% if post.description %}{{ post.description | truncate: 250 }}{% else %}{{ post.content | truncate: 250 }}{% endif %}</p>
       </li>
