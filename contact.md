@@ -13,7 +13,7 @@ title: Contact Aron Barreira Bordin
     <p><b>Kivy Designer</b> is Kivy's tool for designing Graphical User Interfaces (<b>GUIs</b>) from Kivy Widgets. You can compose and customize widgets, and test them. It is completely written in Python using Kivy. </p>
     <p>My goal is to develop and release a <b>more stable version of Kivy Designer</b>, with <b>new features</b> and an easly integration to <b>mobile development.</b></p>
 
-    <p> You can contact me with: <a href="mailto:aron.bordin@gmail.com">aron.bordin@gmail.com</a> or using this form.</p>,
+    <p> You can contact me with: <a href="mailto:aron.bordin@gmail.com">aron.bordin@gmail.com</a> or using this form.</p>
 
   </div>
   <form action="http://formspree.io/aron.bordin@gmail.com">
