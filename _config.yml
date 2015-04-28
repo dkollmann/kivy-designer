@@ -1,0 +1,24 @@
+title: GSoC - Kivy Designer
+description: Google Summer of Code Kivy Designer development
+
+url: http://aron-bordin.github.com/kivy-designer
+baseurl: "/kivy-designer"
+paginate_path: "blog/page:num/"
+permalink: blog/:title/
+
+markdown: redcarpet
+highlighter: pygments
+paginate: 5
+
+navigation:
+ - title: Home
+   url: /index.html
+ - title: Contact
+   url: /contact.html
+
+social:
+   github: aron-bordin
+   facebook: aron.bordin
+   email: aron.bordin@gmail.com
+
+google_analytics: "UA-62355334-1"
