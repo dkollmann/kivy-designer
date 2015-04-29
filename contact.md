@@ -16,7 +16,7 @@ title: Contact Aron Barreira Bordin
     <p> You can contact me with: <a href="mailto:aron.bordin@gmail.com">aron.bordin@gmail.com</a> or using this form.</p>
 
   </div>
-  <form action="http://formspree.io/aron.bordin@gmail.com">
+  <form action="http://formspree.io/aron.bordin@gmail.com" method="post">
     <label for="name">Name</label>    
     <input type="text" id="name" name="name" class="full-width"><br>
     <label for="email">Email Address</label>
