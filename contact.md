@@ -9,7 +9,7 @@ title: Contact Aron Barreira Bordin
     <p>Hi!</p>
     <p>My name is <b>Aron Barreira Bordin</b> and I'm a <b>Brazilian researcher and Computer Science Student</b>.</p>
     
-    <p>Now I'm a Google Summer of Code Student, working with Python Fundation and Kivy, developing the <b>Kivy Designer</b>.</p>
+    <p>Now I'm a <b>Google Summer of Code Student</b>, working with <b>Python Fundation and Kivy</b>, developing the <b>Kivy Designer</b>.</p>
     <p><b>Kivy Designer</b> is Kivy's tool for designing Graphical User Interfaces (<b>GUIs</b>) from Kivy Widgets. You can compose and customize widgets, and test them. It is completely written in Python using Kivy. </p>
     <p>My goal is to develop and release a <b>more stable version of Kivy Designer</b>, with <b>new features</b> and an easly integration to <b>mobile development.</b></p>
 
