@@ -6,7 +6,7 @@ date:   2015-05-06
 
 Hello everyone!
 
-KD will have some new features, so I'm going to ajust de menu. I just draw some of my ideas, it can change well I start the development. 
+KD will have some new features, so I'm going to adjust the menu. I just draw some of my ideas, it can change well I start the development. 
 This new menu will help us to handle new build options, as Buildozer and Hanga, with some Run profiles. 
 You can take a look in this photo:
 
