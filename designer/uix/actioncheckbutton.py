@@ -37,6 +37,8 @@ class ActionCheckButton(ActionItem, BoxLayout):
         BoxLayout.add_widget(self, self._label)
         self._label.valign = 'middle'
         self._label.text = self.text
+        self.padding = [10, 0, 0, 0]
+        self._label.padding_x = 10
         self.checkbox.bind(active=partial(self.dispatch, 'on_active'))
         Clock.schedule_once(self._label_setup, 0)
 
@@ -52,7 +54,6 @@ class ActionCheckButton(ActionItem, BoxLayout):
         '''
         if not self.disabled and self.collide_point(*touch.pos):
             self.checkbox.active = not self.checkbox.active
-            self.cont_menu.dismiss()
 
     def on_active(self, *args):
         '''Default handler for 'on_active' event.

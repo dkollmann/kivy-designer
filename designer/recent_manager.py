@@ -114,7 +114,10 @@ class RecentDialog(BoxLayout):
     def __init__(self, file_list, **kwargs):
         super(RecentDialog, self).__init__(**kwargs)
         item_strings = file_list
-        adapter = ListAdapter(cls=ListItemButton, data=item_strings,
+        list_items = ListItemButton
+        list_items.selected_color = [.4, .7, 1., 1.]
+        list_items.deselected_color = [1, 1, 1, 1]
+        adapter = ListAdapter(cls=list_items, data=item_strings,
                               selection_mode='single',
                               allow_empty_selection=False)
 

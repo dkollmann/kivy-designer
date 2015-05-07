@@ -34,6 +34,7 @@ from designer.undo_manager import WidgetOperation, UndoManager
 from designer.project_loader import ProjectLoader, ProjectLoaderException
 from designer.select_class import SelectClass
 from designer.confirmation_dialog import ConfirmationDialog
+from designer.input_dialog import InputDialog, UserTextInput
 from designer.proj_watcher import ProjectWatcher
 from designer.recent_manager import RecentManager, RecentDialog
 from designer.add_file import AddFileDialog
@@ -133,13 +134,6 @@ class Designer(FloatLayout):
     start_page = ObjectProperty(None)
     '''Reference of :class:`~designer.start_page.DesignerStartPage`.
        :data:`start_page` is a :class:`~kivy.properties.ObjectProperty`
-    '''
-
-    recent_files_cont_menu = ObjectProperty(None)
-    '''The context sub menu, containing the recently opened/saved projects.
-       Reference of :class:`~designer.uix.contextual.ContextSubMenu`.
-       :data:`recent_files_cont_menu` is a
-       :class:`~kivy.properties.ObjectProperty`
     '''
 
     @property
@@ -246,17 +240,13 @@ class Designer(FloatLayout):
         self.remove_widget(self.start_page)
         self.add_widget(self.designer_content, 1)
 
+        self.ids['actn_btn_new_file'].disabled = False
         self.ids['actn_btn_save'].disabled = False
         self.ids['actn_btn_save_as'].disabled = False
-        self.ids['actn_chk_proj_tree'].disabled = False
-        self.ids['actn_chk_prop_event'].disabled = False
-        self.ids['actn_chk_widget_tree'].disabled = False
-        self.ids['actn_chk_status_bar'].disabled = False
-        self.ids['actn_chk_kv_lang_area'].disabled = False
-        self.ids['actn_btn_add_file'].disabled = False
-        self.ids['actn_btn_custom_widget'].disabled = False
-        self.ids['actn_btn_proj_pref'].disabled = False
-        self.ids['actn_btn_run_proj'].disabled = False
+        self.ids['actn_btn_close_proj'].disabled = False
+        self.ids['actn_menu_view'].disabled = False
+        self.ids['actn_menu_proj'].disabled = False
+        self.ids['actn_menu_run'].disabled = False
 
     def on_statusbar_height(self, *args):
         '''Callback for statusbar.height
@@ -402,8 +392,40 @@ class Designer(FloatLayout):
 
         return super(FloatLayout, self).on_touch_down(touch)
 
-    def action_btn_new_pressed(self, *args):
-        '''Event Handler when ActionButton "New" is pressed.
+    def action_btn_new_file_pressed(self, *args):
+        '''Event Handler when ActionButton "New Project" is pressed.
+        '''
+        self._input_dialog = InputDialog("File name:")
+
+        self._input_dialog.bind(on_confirm=self._perform_new_file, on_cancel=self._cancel_popup)
+        self._popup = Popup(title="Add new File", content=self._input_dialog,
+                            size_hint=(None, None), size=('200pt', '150pt'),
+                            auto_dimiss=False)
+        self._popup.open()
+
+    def _perform_new_file(self, *args):
+        '''
+        Create a new file in the project folder
+        '''
+        file_name = self._input_dialog.get_user_input()
+        if file_name.find('.') == -1:
+            file_name += '.py'
+        new_file = os.path.join(self.project_loader.proj_dir, file_name)
+        if os.path.exists(new_file):
+            self._input_dialog.lbl_error.text = 'File exists'
+            return
+
+        self.project_loader.proj_watcher.stop()
+        open(new_file, 'a').close()
+        self.project_loader.proj_watcher.start_watching(
+                self.project_loader.proj_dir)
+
+        self.designer_content.update_tree_view(self.project_loader)
+
+        self._cancel_popup()
+
+    def action_btn_new_project_pressed(self, *args):
+        '''Event Handler when ActionButton "New Project" is pressed.
         '''
 
         if not self._curr_proj_changed:
@@ -780,19 +802,14 @@ class Designer(FloatLayout):
         self._popup.open()
 
     def action_btn_recent_files_pressed(self, *args):
-        '''Event Handler when ActionButton "Recent Files" is pressed.
+        '''Event Handler when ActionButton "Recent Projects" is pressed.
         '''
-        pass
+        self._recent_dlg = RecentDialog(self.recent_manager.list_files)
+        self._recent_dlg.bind(on_cancel=self._cancel_popup)
+        self._popup = Popup(title='Recent Projects', content=self._recent_dlg,
+                            size_hint=(0.5, 0.5), auto_dismiss=False)
+        self._popup.open()
 
-    def fill_recent_menu(self, *args):
-        '''Fill self.recent_files_cont_menu with DesignerActionButton
-           of all Recent Files
-        '''
-        recent_menu = self.recent_files_cont_menu
-        for _file in self.recent_manager.list_files:
-            act_btn = DesignerActionButton(text=_file, shorten=True)
-            recent_menu.add_widget(act_btn)
-            act_btn.bind(on_release=self._recent_file_release)
 
     def _recent_file_release(self, instance, *args):
         '''Event Handler for 'on_select' event of self._recent_dlg.
@@ -1152,7 +1169,7 @@ class Designer(FloatLayout):
 
         self._popup.open()
 
-    def action_btn_project_pref_pressed(self, *args):
+    def action_btn_project_settings_pressed(self, *args):
         '''Event Handler when ActionButton "Project Prefences" is pressed.
         '''
         self.proj_settings = ProjectSettings(proj_loader=self.project_loader)
@@ -1335,8 +1352,6 @@ class DesignerApp(App):
         self.create_kivy_designer_dir()
         self.root.start_page.recent_files_box.add_recent(
             self.root.recent_manager.list_files)
-
-        self.root.fill_recent_menu()
 
     def create_kivy_designer_dir(self):
         '''To create the ~/.kivy-designer dir

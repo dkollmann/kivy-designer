@@ -99,6 +99,13 @@ class ProjectLoader(object):
         self.proj_dir = ""
         self._is_root_already_in_factory = False
 
+    def update_file_list(self):
+        '''
+        Update and return the file_list object
+        '''
+        self.file_list = self._get_file_list(self.proj_dir)
+        return self.file_list
+
     def _get_file_list(self, path):
         '''This function is recursively called for loading all py file files
            in the current directory.
@@ -116,7 +123,7 @@ class ProjectLoader(object):
                 file_list += self._get_file_list(file_path)
             else:
                 # Consider only kv, py and buildozer(spec) files
-                if file_path[file_path.rfind('.'):] in [".py", ".spec"]:
+                if file_path[file_path.rfind('.'):] in [".py", ".spec", ".kv"]:
                     if os.path.dirname(file_path) == self.proj_dir:
                         file_list.insert(0, file_path)
                     else:
