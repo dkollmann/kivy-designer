@@ -805,7 +805,8 @@ class Designer(FloatLayout):
         '''Event Handler when ActionButton "Recent Projects" is pressed.
         '''
         self._recent_dlg = RecentDialog(self.recent_manager.list_files)
-        self._recent_dlg.bind(on_cancel=self._cancel_popup)
+        self._recent_dlg.bind(on_cancel=self._cancel_popup,
+                              on_select=self._recent_file_release)
         self._popup = Popup(title='Recent Projects', content=self._recent_dlg,
                             size_hint=(0.5, 0.5), auto_dismiss=False)
         self._popup.open()
@@ -814,7 +815,8 @@ class Designer(FloatLayout):
     def _recent_file_release(self, instance, *args):
         '''Event Handler for 'on_select' event of self._recent_dlg.
         '''
-        self._perform_open(instance.text)
+        self._perform_open(instance.get_selected_project())
+        self._cancel_popup(instance, args)
 
     def on_request_close(self, *args):
         '''Event Handler for 'on_request_close' event of Window.

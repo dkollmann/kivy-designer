@@ -113,16 +113,23 @@ class RecentDialog(BoxLayout):
 
     def __init__(self, file_list, **kwargs):
         super(RecentDialog, self).__init__(**kwargs)
-        item_strings = file_list
-        list_items = ListItemButton
-        list_items.selected_color = [.4, .7, 1., 1.]
-        list_items.deselected_color = [1, 1, 1, 1]
-        adapter = ListAdapter(cls=list_items, data=item_strings,
+        self.item_strings = file_list
+        self.list_items = ListItemButton
+        self.list_items.selected_color = [.4, .7, 1., 1.]
+        self.list_items.deselected_color = [1, 1, 1, 1]
+
+        self.adapter = ListAdapter(cls=self.list_items, data=self.item_strings,
                               selection_mode='single',
                               allow_empty_selection=False)
 
-        self.listview = ListView(adapter=adapter)
+        self.listview = ListView(adapter=self.adapter)
         self.add_widget(self.listview, 1)
+
+    def get_selected_project(self, *args):
+        '''
+        Get the path of the selected project
+        '''
+        return self.adapter.selection[0].text
 
     def on_select_button(self, *args):
         '''Event handler for 'on_release' event of select_button.
