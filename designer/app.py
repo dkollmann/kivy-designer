@@ -1,3 +1,5 @@
+import webbrowser
+
 __all__ = ('DesignerApp', )
 
 import kivy
@@ -186,6 +188,12 @@ class Designer(FloatLayout):
             'internal', 'window_height', 600
         ))
         Window.size = width, height
+
+    def open_docs(self, *args):
+        '''
+        Open the Kivy docs
+        '''
+        webbrowser.open("http://kivy.org/docs/")
 
     def show_help(self, *args):
         '''Event handler for 'on_help' event of self.start_page
