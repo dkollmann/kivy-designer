@@ -546,6 +546,46 @@ class Designer(FloatLayout):
                             auto_dismiss=False)
         self._popup.open()
 
+    def action_btn_close_proj_pressed(self, *args):
+        '''
+        Event Handler when ActionButton "Close Project" is pressed.
+        '''
+        if not self._curr_proj_changed:
+            self._perform_close_project()
+            return
+
+        self._confirm_dlg = ConfirmationDialog('All unsaved changes will be '
+                                               'lost.\n'
+                                               'Do you want to continue?')
+
+        self._confirm_dlg.bind(on_ok=self._perform_close_project,
+                               on_cancel=self._cancel_popup)
+
+        self._popup = Popup(title='Kivy Designer', content=self._confirm_dlg,
+                            size_hint=(None, None), size=('200pt', '150pt'),
+                            auto_dismiss=False)
+        self._popup.open()
+
+    def _perform_close_project(self, *args):
+        '''
+        Close the current project and go to the start page
+        '''
+        if hasattr(self, '_popup'):
+            self._popup.dismiss()
+
+        self.remove_widget(self.designer_content)
+        self.add_widget(self.start_page, 1)
+
+        self.ids['actn_btn_new_file'].disabled = True
+        self.ids['actn_btn_save'].disabled = True
+        self.ids['actn_btn_save_as'].disabled = True
+        self.ids['actn_btn_close_proj'].disabled = True
+        self.ids['actn_menu_view'].disabled = True
+        self.ids['actn_menu_proj'].disabled = True
+        self.ids['actn_menu_run'].disabled = True
+
+        self._curr_proj_changed = False
+
     def _show_open_dialog(self, *args):
         '''To show FileBrowser to "Open" a project
         '''
