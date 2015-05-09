@@ -268,16 +268,21 @@
     text_file: text_file
     text_folder: text_folder
     always_check: always_check
+    lbl_error: lbl_error
     orientation: 'vertical'
 
     Label:
-        text: 'File:'
+        id: lbl_error
+        size_hint_x: 1
+        color: [1, 0, 0, 1]
+
+    Label:
+        text: 'Select the File:'
         size_hint_x: None
-        width: '20pt'
 
     BoxLayout:
         size_hint_y: None
-        height: 'DesignerActionButton24pt'
+        height: '24pt'
         TextInput:
             id: text_file
             multiline: False
@@ -288,9 +293,8 @@
             on_press: root.open_file_btn_pressed()
             
     Label:
-        text: 'Add File to:'
+        text: 'Target Folder:'
         size_hint_x: None
-        width: '55pt'
 
     BoxLayout:
         size_hint_y: None
@@ -298,6 +302,7 @@
         TextInput:
             id: text_folder
             multiline: False
+            focus: True
         Button:
             size_hint_x: None
             text: 'Open Folder'
@@ -973,7 +978,7 @@
                     text: 'New Project'
                     on_release: root.action_btn_new_project_pressed()
                 DesignerActionButton:
-                    text: 'Open'
+                    text: 'Open Project'
                     on_release: root.action_btn_open_pressed()
                 DesignerActionButton:
                     id: actn_btn_save
@@ -1070,11 +1075,6 @@
                     text: 'Run'
                     on_release: root.action_btn_run_project_pressed()
                 DesignerActionButton:
-                    id: actn_btn_stop_proj
-                    disabled: True
-                    text: 'Stop'
-                    on_release: root.action_btn_stop_project_pressed()
-                DesignerActionButton:
                     id: actn_btn_clean_proj
                     text: 'Clean'
                     on_release: root.action_btn_clean_project_pressed()
@@ -1102,7 +1102,7 @@
                 DesignerActionButton:
                     id: actn_btn_wiki
                     text: 'Kivy Docs'
-                    on_release: root.open_wiki()
+                    on_release: root.open_docs()
                 
                 DesignerActionButton:
                     id: actn_btn_about

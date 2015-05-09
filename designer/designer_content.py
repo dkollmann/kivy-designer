@@ -55,6 +55,7 @@ class DesignerContent(FloatLayout):
         '''
 
         self.proj_loader = proj_loader
+        self.proj_loader.update_file_list()
 
         # Fill nodes with file and directories
         self._root_node = self.tree_view.root

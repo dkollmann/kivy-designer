@@ -1199,9 +1199,7 @@ class Designer(FloatLayout):
 
         self.statusbar.show_message('File successfully added to project')
         self._popup.dismiss()
-        if self._add_file_dlg.target_file[3:] == '.py':
-            self.designer_content.add_file_to_tree_view(
-                self._add_file_dlg.target_file)
+        self.designer_content.update_tree_view(self.project_loader)
 
     def action_btn_add_file_pressed(self, *args):
         '''Event Handler when ActionButton "Add File" is pressed.
@@ -1215,7 +1213,7 @@ class Designer(FloatLayout):
         self._popup = Popup(title="Add File",
                             content=self._add_file_dlg,
                             size_hint=(None, None),
-                            size=(400, 300), auto_dismiss=False)
+                            size=(480, 320), auto_dismiss=False)
 
         self._popup.open()
 
