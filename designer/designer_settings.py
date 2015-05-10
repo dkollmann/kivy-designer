@@ -61,9 +61,12 @@ class DesignerSettings(Settings):
 
         self.config_parser.read(DESIGNER_CONFIG)
         self.config_parser.upgrade(DEFAULT_CONFIG)
-        self.add_json_panel('Kivy Designer Settings', self.config_parser,
-                            os.path.join(_dir, 'designer',
-                                         'settings', 'designer_settings.json'))
+        self.add_json_panel('Kivy Designer', self.config_parser,
+                            os.path.join(_dir, 'designer', 'settings', 'designer_settings.json'))
+        self.add_json_panel('Buildozer', self.config_parser,
+                            os.path.join(_dir, 'designer', 'settings', 'buildozer_settings.json'))
+        self.add_json_panel('Hanga', self.config_parser,
+                            os.path.join(_dir, 'designer', 'settings', 'hanga_settings.json'))
 
         path = self.config_parser.getdefault(
             'global', 'python_shell_path', '')

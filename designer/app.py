@@ -845,7 +845,7 @@ class Designer(FloatLayout):
         self._popup = Popup(title="Kivy Designer Settings",
                             content=self.designer_settings,
                             size_hint=(None, None),
-                            size=(600, 400), auto_dismiss=False)
+                            size=(720, 480), auto_dismiss=False)
 
         self._popup.open()
 
@@ -1039,6 +1039,10 @@ class Designer(FloatLayout):
         '''Event Handler for 'on_success' event of self._custom_browser
         '''
 
+        # if there is no selected file
+        if len(instance.selection) < 1:
+            return
+
         file_path = instance.selection[0]
         self._popup.dismiss()
 
@@ -1226,7 +1230,8 @@ class Designer(FloatLayout):
         self._popup = Popup(title="Project Preferences",
                             content=self.proj_settings,
                             size_hint=(None, None),
-                            size=(600, 400), auto_dismiss=False)
+                            size=(720, 480),
+                            auto_dismiss=False)
 
         self._popup.open()
 
