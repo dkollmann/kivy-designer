@@ -405,7 +405,8 @@ class Designer(FloatLayout):
         '''
         self._input_dialog = InputDialog("File name:")
 
-        self._input_dialog.bind(on_confirm=self._perform_new_file, on_cancel=self._cancel_popup)
+        self._input_dialog.bind(on_confirm=self._perform_new_file,
+                                on_cancel=self._cancel_popup)
         self._popup = Popup(title="Add new File", content=self._input_dialog,
                             size_hint=(None, None), size=('200pt', '150pt'),
                             auto_dimiss=False)
@@ -858,7 +859,6 @@ class Designer(FloatLayout):
         self._popup = Popup(title='Recent Projects', content=self._recent_dlg,
                             size_hint=(0.5, 0.5), auto_dismiss=False)
         self._popup.open()
-
 
     def _recent_file_release(self, instance, *args):
         '''Event Handler for 'on_select' event of self._recent_dlg.

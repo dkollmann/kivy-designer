@@ -1,5 +1,6 @@
 from kivy.properties import ObjectProperty
-from kivy.uix.actionbar import ActionGroup, ActionPrevious, ActionItem, ActionButton
+from kivy.uix.actionbar import ActionGroup, ActionPrevious, \
+                                ActionItem, ActionButton
 from designer.uix.contextual import ContextSubMenu
 
 
@@ -24,7 +25,7 @@ class DesignerActionButton(ActionButton):
     def __init__(self, **kwargs):
         super(DesignerActionButton, self).__init__(**kwargs)
         self.minimum_width = 150
-        self.on_press= self.on_btn_press
+        self.on_press = self.on_btn_press
 
     def on_btn_press(self, *args):
         '''

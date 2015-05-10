@@ -32,7 +32,7 @@ class InputDialog(BoxLayout):
     def __init__(self, message):
         super(InputDialog, self).__init__()
         self.message = message
-        self.user_input.bind(text = self.on_text)
+        self.user_input.bind(text=self.on_text)
 
     def on_confirm(self, *args):
         pass
@@ -48,6 +48,7 @@ class InputDialog(BoxLayout):
 
     def on_text(self, *args):
         self.btn_confirm.disabled = len(args[1]) == 0
+
 
 class UserTextInput(TextInput):
     '''
@@ -65,6 +66,6 @@ class UserTextInput(TextInput):
         s = substring if \
             (substring.isalnum() or substring in ['.', '-', '_']) and \
                 len(self.text) < 32 \
-            else  ""
+            else ""
 
         return super(UserTextInput, self).insert_text(s, from_undo=from_undo)

@@ -71,7 +71,6 @@ class DesignerContent(FloatLayout):
         for node in temp:
             self.tree_view.remove_node(node)
 
-
     def add_file_to_tree_view(self, _file):
         '''This function is used to insert py file given by it's path argument
            _file. It will also insert any directory node if not present.
