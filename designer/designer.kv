@@ -1038,6 +1038,11 @@
                     id: actn_chk_kv_lang_area
                     text: 'KV Lang Area'
                     on_active: root.action_chk_btn_kv_area_active(self)
+                ActionCheckButton:
+                    id: actn_chk_fullscreen
+                    checkbox_active: False
+                    text: 'Fullscreen'
+                    on_active: root.toogle_fullscreen(self)
 
             DesignerActionGroup:
                 id: actn_menu_proj

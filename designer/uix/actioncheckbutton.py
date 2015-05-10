@@ -2,7 +2,7 @@ from kivy.uix.actionbar import ActionItem
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.checkbox import CheckBox
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty, StringProperty, BooleanProperty
 from kivy.clock import Clock
 
 from functools import partial
@@ -20,6 +20,11 @@ class ActionCheckButton(ActionItem, BoxLayout):
     text = StringProperty('Check Button')
     '''text which is displayed by ActionCheckButton.
        :data:`text` is a :class:`~kivy.properties.StringProperty`
+    '''
+
+    checkbox_active = BooleanProperty(True)
+    '''boolean indicating the checkbox.active state
+        :data:`active` is a :class:`~kivy.properties.BooleanProperty`
     '''
 
     cont_menu = ObjectProperty(None)
@@ -47,6 +52,7 @@ class ActionCheckButton(ActionItem, BoxLayout):
         '''
         self._label.text_size = (self.minimum_width - self.checkbox.width - 4,
                                  self._label.size[1])
+        self.checkbox.active = self.checkbox_active
 
     def on_touch_down(self, touch):
         '''Override of its parent's on_touch_down, used to reverse the state
@@ -58,7 +64,7 @@ class ActionCheckButton(ActionItem, BoxLayout):
     def on_active(self, *args):
         '''Default handler for 'on_active' event.
         '''
-        pass
+        self.checkbox_active = args[1]
 
     def on_text(self, instance, value):
         '''Used to set the text of label

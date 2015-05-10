@@ -178,6 +178,15 @@ class Designer(FloatLayout):
         )
         self.designer_settings.config_parser.write()
 
+    def toogle_fullscreen(self, check, **kwargs):
+        '''
+        Event Handler when ActionCheckButton "Fullscreen" is changed.
+        '''
+        if check.checkbox.active is True:
+            Window.fullscreen = "auto"
+        else:
+            Window.fullscreen = False
+
     def restore_window_size(self, *_):
         '''Restore window size from previous application run
         '''

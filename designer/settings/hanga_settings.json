@@ -4,11 +4,5 @@
     "title": "Hanga API Key",
     "section": "global",
     "key": "hanga_api_key"
-  },
-  {
-    "type": "bool",
-    "title": "Create buildozer.spec Automatically",
-    "section": "global",
-    "key": "create_buildozer_prj"
   }
 ]
