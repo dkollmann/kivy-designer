@@ -45,6 +45,7 @@ from designer.designer_content import DesignerContent
 from designer.uix.designer_sandbox import DesignerSandbox
 from designer.project_settings import ProjectSettings
 from designer.designer_settings import DesignerSettings
+from designer.profile_settings import ProfileSettings
 from designer.helper_functions import get_kivy_designer_dir
 from designer.new_dialog import NewProjectDialog, NEW_PROJECTS
 from designer.eventviewer import EventViewer
@@ -158,6 +159,9 @@ class Designer(FloatLayout):
         self.designer_settings.bind(on_config_change=self._config_change)
         self.designer_settings.load_settings()
         self.designer_settings.bind(on_close=self._cancel_popup)
+
+        self.prof_settings = ProfileSettings()
+        self.prof_settings.bind(on_close=self._cancel_popup)
 
         Clock.schedule_interval(
             self.project_loader.perform_auto_save,
@@ -1242,6 +1246,18 @@ class Designer(FloatLayout):
                             size=(720, 480),
                             auto_dismiss=False)
 
+        self._popup.open()
+
+    def action_btn_edit_prof_project_pressed(self, *args):
+        '''Event Handler when ActionButton "Edit Profiles" is pressed.
+        '''
+        self.prof_settings.parent = None
+        self.prof_settings.load_profiles()
+        self._popup = Popup(title="Build Profiles",
+                            content=self.prof_settings,
+                            size_hint=(None, None),
+                            size=(720, 480),
+                            auto_dismiss=False)
         self._popup.open()
 
     def action_btn_run_project_pressed(self, *args):
