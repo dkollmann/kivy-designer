@@ -10,7 +10,7 @@
     "type": "options",
     "title": "Builder",
     "section": "profile",
-    "desc": "Select the builder. Used with Android and iOS",
+    "desc": "Select the builder. Used with Android and iOS only",
     "options": ["Buildozer", "Hanga"],
     "key": "builder"
   },
@@ -34,21 +34,21 @@
     "type": "bool",
     "title": "Install on Device",
     "section": "profile",
-    "desc": "Automatically install on device",
+    "desc": "Automatically install on device. Used with Android and iOS only",
     "key": "install"
   },
   {
     "type": "bool",
     "title": "Debug",
     "section": "profile",
-    "desc": "Show application output on console",
+    "desc": "Show application output on console. Used with Android and iOS only",
     "key": "debug"
   },
   {
     "type": "bool",
     "title": "Verbose",
     "section": "profile",
-    "desc": "Show verbose information while building the app",
+    "desc": "Show verbose information while building the app. Used with Android and iOS only",
     "key": "verbose"
   }
 ]
