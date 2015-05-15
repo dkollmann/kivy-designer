@@ -11,5 +11,7 @@ This new menu will help us to handle new build options, as Buildozer and Hanga, 
 You can take a look in this photo:
 
 <a target="_blank" href="{{ "/assets/uploads/new_menu.jpg" | prepend: site.baseurl }}">
-	<img src="{{ "/assets/uploads/new_menu.jpg" | prepend: site.baseurl }}" style="max-width: 600px" >
+	<img src="{{ "/assets/uploads/new_menu_small.png" | prepend: site.baseurl }}" style="max-width: 600px" >
 </a>
+
+(Check the [original image here]({{ "/assets/uploads/new_menu.jpg" | prepend: site.baseurl }}) )
