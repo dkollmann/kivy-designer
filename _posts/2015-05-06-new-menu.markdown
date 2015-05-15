@@ -15,3 +15,12 @@ You can take a look in this photo:
 </a>
 
 (Check the [original image here]({{ "/assets/uploads/new_menu.jpg" | prepend: site.baseurl }}) )
+
+I read a lot about Kivy these weeks, so I'll be able to start my proposal development soon :)
+
+Keep connected to know about the development process.
+
+See you soon.
+
+
+Aron Bordin.
