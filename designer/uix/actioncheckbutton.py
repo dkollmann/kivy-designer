@@ -14,7 +14,7 @@ class ActionCheckButton(ActionItem, BoxLayout):
 
     checkbox = ObjectProperty(None)
     '''Instance of :class:`~kivy.uix.checkbox.CheckBox`.
-       :data:`checkbox` is a :class:`~kivy.properties.StringProperty`
+       :data:`checkbox` is a :class:`~kivy.properties.ObjectProperty`
     '''
 
     text = StringProperty('Check Button')
@@ -27,6 +27,17 @@ class ActionCheckButton(ActionItem, BoxLayout):
         :data:`active` is a :class:`~kivy.properties.BooleanProperty`
     '''
 
+    group = ObjectProperty(None)
+    '''Checkbox group
+    :data:`group` is a :class:`~kivy.properties.ObjectProperty`
+    '''
+
+    allow_no_selection = BooleanProperty(True)
+    '''This specifies whether the checkbox in group allows
+        everything to be deselected.
+    :data:`allow_no_selection` is a :class:`~kivy.properties.BooleanProperty`
+    '''
+
     cont_menu = ObjectProperty(None)
 
     __events__ = ('on_active',)
@@ -34,7 +45,9 @@ class ActionCheckButton(ActionItem, BoxLayout):
     def __init__(self, **kwargs):
         super(ActionCheckButton, self).__init__(**kwargs)
         self._label = Label()
-        self.checkbox = CheckBox(active=True)
+        self.checkbox = CheckBox(active=True,
+                                 group=self.group,
+                                 allow_no_selection=self.allow_no_selection)
         self.checkbox.size_hint_x = None
         self.checkbox.x = self.x + 2
         self.checkbox.width = '20sp'
@@ -59,7 +72,7 @@ class ActionCheckButton(ActionItem, BoxLayout):
            of CheckBox.
         '''
         if not self.disabled and self.collide_point(*touch.pos):
-            self.checkbox.active = not self.checkbox.active
+            self.checkbox._toggle_active()
 
     def on_active(self, *args):
         '''Default handler for 'on_active' event.

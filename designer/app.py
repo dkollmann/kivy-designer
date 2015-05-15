@@ -49,7 +49,7 @@ from designer.profile_settings import ProfileSettings
 from designer.helper_functions import get_kivy_designer_dir
 from designer.new_dialog import NewProjectDialog, NEW_PROJECTS
 from designer.eventviewer import EventViewer
-from designer.uix.designer_action_items import DesignerActionButton
+from designer.uix.designer_action_items import DesignerActionProfileCheck
 from designer.help_dialog import HelpDialog, AboutDialog
 
 NEW_PROJECT_DIR_NAME = 'new_proj'
@@ -136,6 +136,12 @@ class Designer(FloatLayout):
 
     start_page = ObjectProperty(None)
     '''Reference of :class:`~designer.start_page.DesignerStartPage`.
+       :data:`start_page` is a :class:`~kivy.properties.ObjectProperty`
+    '''
+
+    select_profile_cont_menu = ObjectProperty(None)
+    '''Reference of
+        :class:`~designer.uix.designer_action_items.DesignerActionSubMenu`.
        :data:`start_page` is a :class:`~kivy.properties.ObjectProperty`
     '''
 
@@ -863,6 +869,51 @@ class Designer(FloatLayout):
 
         self._popup.open()
 
+    def action_btn_select_prof_project_pressed(self, *args):
+        '''Event handler for "Select Profile" menu
+        '''
+        pass
+
+    def fill_select_profile_menu(self, *args):
+        '''Fill self.select_profile_cont_menu with available Build Profiles
+        '''
+        prof_menu = self.select_profile_cont_menu
+        self.prof_settings.load_profiles()
+        group = 'profile'
+
+        for profile in sorted(self.prof_settings.config_parsers.keys()):
+            config = self.prof_settings.config_parsers[profile]
+            config_path = config.filename
+
+            prof_name = config.getdefault('profile', 'name', 'PROFILE')
+            if not prof_name.strip():
+                prof_name = 'PROFILE'
+
+            btn = DesignerActionProfileCheck(group=group,
+                                             allow_no_selection=False)
+            btn.text = prof_name
+            btn.checkbox.active = False
+
+            if self.designer_settings.config_parser.getdefault('internal',
+                                        'default_profile', '') == config_path:
+                btn.checkbox.active = True
+
+            btn.config_key = profile
+            btn.bind(on_active=self._perform_profile_selected)
+            prof_menu.add_widget(btn)
+
+    def _perform_profile_selected(self, *args):
+        '''Event handler to select profile radio button.
+        Save the selected config_parser path to the config
+        '''
+        _config = self.prof_settings.config_parsers[args[0].config_key]
+        _config_path = _config.filename
+        if args[2]:
+            self.designer_settings.config_parser.set('internal',
+                                                    'default_profile',
+                                                    _config_path)
+            self.designer_settings.config_parser.write()
+
     def action_btn_recent_files_pressed(self, *args):
         '''Event Handler when ActionButton "Recent Projects" is pressed.
         '''
@@ -1430,6 +1481,8 @@ class DesignerApp(App):
         self.create_kivy_designer_dir()
         self.root.start_page.recent_files_box.add_recent(
             self.root.recent_manager.list_files)
+
+        self.root.fill_select_profile_menu()
 
     def create_kivy_designer_dir(self):
         '''To create the ~/.kivy-designer dir

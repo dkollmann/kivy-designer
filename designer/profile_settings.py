@@ -3,10 +3,10 @@ import os.path
 import shutil
 
 from kivy.config import ConfigParser
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, DictProperty
 from kivy.uix.popup import Popup
 from kivy.uix.settings import Settings, InterfaceWithSidebar, \
-                                    MenuSidebar, ContentPanel
+    MenuSidebar, ContentPanel
 
 import designer
 from designer.confirmation_dialog import ConfirmationDialog
@@ -57,7 +57,7 @@ class ProfileSettingsInterface(InterfaceWithSidebar):
     def __init__(self, **kwargs):
         super(ProfileSettingsInterface, self).__init__(**kwargs)
         self.button_bar.btn_delete_prof.bind(
-                            on_press=lambda j: self.dispatch('on_delete'))
+            on_press=lambda j: self.dispatch('on_delete'))
         self.menu.new_button.bind(on_press=lambda j: self.dispatch('on_new'))
         self.content.bind(on_current_panel=self.on_current_panel)
 
@@ -86,10 +86,14 @@ class ProfileSettings(Settings):
        showing build profile settings of Kivy Designer.
     '''
 
+    config_parsers = DictProperty({})
+    '''List of config parsers
+    :class:`~kivy.properties.DictProperty` and defaults to {}.
+    '''
+
     def __init__(self, **kwargs):
         super(ProfileSettings, self).__init__(**kwargs)
         # list of ConfigParsers. Each file has one to handle the settings
-        self.config_parsers = {}
         self.PROFILES_PATH = ''
         self.DEFAULT_PROFILES = ''
         self.interface.bind(on_new=self.on_new)
@@ -137,9 +141,12 @@ class ProfileSettings(Settings):
                 prof_name = 'PROFILE'
             self.add_json_panel(prof_name,
                                 self.config_parsers[_file],
-                                os.path.join(_dir, 'designer',
-                                             'settings',
-                                             'build_profile.json'))
+                                os.path.join(
+                                    _dir,
+                                    'designer',
+                                    'settings',
+                                    'build_profile.json')
+                                )
 
         # force to show the first profile
         first_panel = self.interface.menu.buttons_layout.children[-1].uid
@@ -177,8 +184,10 @@ class ProfileSettings(Settings):
         '''
         self._confirm_dlg = ConfirmationDialog(
             message="Do you want to delete this profile?")
-        self._popup = Popup(title='Delete Profile', content=self._confirm_dlg,
-                            size_hint=(None, None), size=('200pt', '150pt'),
+        self._popup = Popup(title='Delete Profile',
+                            content=self._confirm_dlg,
+                            size_hint=(None, None),
+                            size=('200pt', '150pt'),
                             auto_dismiss=False)
         self._confirm_dlg.bind(on_ok=self._perform_delete_prof,
                                on_cancel=self._popup.dismiss)

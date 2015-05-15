@@ -1039,6 +1039,7 @@
     statusbar: statusbar
     actionbar: actionbar
     start_page: start_page
+    select_profile_cont_menu: select_profile_cont_menu
 
     ActionBar:
         id: actionbar
@@ -1173,9 +1174,13 @@
                     id: actn_btn_build_proj
                     text: 'Build'
                     on_release: root.action_btn_build_project_pressed()
+                DesignerActionSubMenu:
+                    id: select_profile_cont_menu
+                    text: 'Select Profile'
+                    on_release: root.action_btn_select_prof_project_pressed()
                 DesignerActionButton:
                     id: actn_btn_edit_prof_proj
-                    text: 'Edit Profiles'
+                    text: 'Edit Profiles...'
                     on_release: root.action_btn_edit_prof_project_pressed()
 
             DesignerActionGroup:
