@@ -52,12 +52,19 @@ class ProfileSettingsInterface(InterfaceWithSidebar):
     :class:`~kivy.properties.ObjectProperty` and defaults to None.
     '''
 
-    __events__ = ('on_delete', 'on_new', )
+    select_prof_button = ObjectProperty(None)
+    ''' Reference to the widget's Use this Profile button.
+    :class:`~kivy.properties.ObjectProperty` and defaults to None.
+    '''
+
+    __events__ = ('on_delete', 'on_new', 'on_use_this_profile')
 
     def __init__(self, **kwargs):
         super(ProfileSettingsInterface, self).__init__(**kwargs)
         self.button_bar.btn_delete_prof.bind(
             on_press=lambda j: self.dispatch('on_delete'))
+        self.button_bar.btn_select_prof.bind(
+            on_press=lambda j: self.dispatch('on_use_this_profile'))
         self.menu.new_button.bind(on_press=lambda j: self.dispatch('on_new'))
         self.content.bind(on_current_panel=self.on_current_panel)
 
@@ -68,6 +75,11 @@ class ProfileSettingsInterface(InterfaceWithSidebar):
 
     def on_new(self, *args):
         '''Event handler for button "New" press
+        '''
+        pass
+
+    def on_use_this_profile(self, *args):
+        '''Event handler for button "Use this Profile" press
         '''
         pass
 
@@ -91,6 +103,13 @@ class ProfileSettings(Settings):
     :class:`~kivy.properties.DictProperty` and defaults to {}.
     '''
 
+    selected_config = ObjectProperty(None)
+    '''ConfigParser of the selected config
+    :class `~kivy.properties.ObjectProperty` and defaults to None.
+    '''
+
+    __events__ = ('on_use_this_profile', 'on_changed')
+
     def __init__(self, **kwargs):
         super(ProfileSettings, self).__init__(**kwargs)
         # list of ConfigParsers. Each file has one to handle the settings
@@ -98,11 +117,15 @@ class ProfileSettings(Settings):
         self.DEFAULT_PROFILES = ''
         self.interface.bind(on_new=self.on_new)
         self.interface.bind(on_delete=self.on_delete)
+        self.interface.bind(
+            on_use_this_profile=lambda j: self.dispatch('on_use_this_profile'))
+        self.interface.content.bind(on_current_panel=self.on_current_config)
+        self.settings_changed = False  # changes in name, new or delete
 
     def load_profiles(self):
         '''This function loads project settings
         '''
-        self.config_parser = ConfigParser()
+        self.settings_changed = False
         self.PROFILES_PATH = os.path.join(get_kivy_designer_dir(),
             'profiles')
 
@@ -123,7 +146,6 @@ class ProfileSettings(Settings):
 
         self.config_parsers = {}
         self.interface.menu.buttons_layout.clear_widgets()
-
         for _file in os.listdir(self.PROFILES_PATH):
             _file_path = os.path.join(self.PROFILES_PATH, _file)
             config_parser = ConfigParser()
@@ -157,6 +179,9 @@ class ProfileSettings(Settings):
         '''
         args[0].write()
         super(ProfileSettings, self).on_config_change(*args)
+        if args[2] == 'name':
+            self.update_panel()
+            self.settings_changed = True
 
     def on_new(self, *args):
         '''Handler for "New Profile" button
@@ -178,6 +203,7 @@ class ProfileSettings(Settings):
         config_parser.write()
 
         self.update_panel()
+        self.settings_changed = True
 
     def on_delete(self, *args):
         '''Handler to "Delete profile" button
@@ -196,7 +222,34 @@ class ProfileSettings(Settings):
     def _perform_delete_prof(self, *args):
         '''Delete the selected profile
         '''
-        selected_config = self.interface.content.current_panel.config.filename
-        os.remove(selected_config)
+        self.selected_config = self.interface.content.current_panel.config
+        os.remove(self.selected_config.filename)
         self.update_panel()
         self._popup.dismiss()
+        self.settings_changed = True
+
+    def on_use_this_profile(self, *args):
+        '''Event handler for button "Use this Profile" press
+        '''
+        self.selected_config = self.interface.content.current_panel.config
+
+    def on_current_config(self, *args):
+        ''' Event handler to panel change
+        The default profile cannot be deleted, so we watch this event to
+        prevent the user to delete desktop.ini
+        '''
+        self.selected_config = self.interface.content.current_panel.config
+
+    def on_changed(self, *args):
+        '''Event handler to Settings changes.
+        Will be called when the user delete,
+        create or change a name of a profile.
+        '''
+        pass
+
+    def on_close(self, *args):
+        '''Event handler when the settings is closed
+        '''
+        if self.settings_changed:
+            self.dispatch('on_changed')
+        self.settings_changed = False

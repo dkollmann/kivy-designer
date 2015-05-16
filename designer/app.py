@@ -168,6 +168,10 @@ class Designer(FloatLayout):
 
         self.prof_settings = ProfileSettings()
         self.prof_settings.bind(on_close=self._cancel_popup)
+        self.prof_settings.bind(on_changed=self.on_profiles_changed)
+        self.prof_settings.bind(
+            on_use_this_profile=self._perform_use_this_prof)
+        self.prof_settings.load_profiles()
 
         Clock.schedule_interval(
             self.project_loader.perform_auto_save,
@@ -874,13 +878,28 @@ class Designer(FloatLayout):
         '''
         pass
 
+    def on_profiles_changed(self, *args):
+        '''Callback when there is a modification in the profile settings
+        '''
+        self.prof_settings.load_profiles()
+        self.fill_select_profile_menu()
+
+    def _perform_use_this_prof(self, *args):
+        '''Callback to "Use this Profile" button
+        '''
+        _config = args[0].selected_config
+        _config_path = _config.filename
+        self.designer_settings.config_parser.set('internal',
+                                                'default_profile',
+                                                _config_path)
+        self.designer_settings.config_parser.write()
+
     def fill_select_profile_menu(self, *args):
         '''Fill self.select_profile_cont_menu with available Build Profiles
         '''
         prof_menu = self.select_profile_cont_menu
-        self.prof_settings.load_profiles()
+        prof_menu.remove_children()
         group = 'profile'
-
         for profile in sorted(self.prof_settings.config_parsers.keys()):
             config = self.prof_settings.config_parsers[profile]
             config_path = config.filename
@@ -894,24 +913,26 @@ class Designer(FloatLayout):
             btn.text = prof_name
             btn.checkbox.active = False
 
-            if self.designer_settings.config_parser.getdefault('internal',
-                                        'default_profile', '') == config_path:
-                btn.checkbox.active = True
+            # if self.designer_settings.config_parser.getdefault('internal',
+            #                             'default_profile', '') == config_path:
+            #     btn.checkbox.active = True
 
             btn.config_key = profile
             btn.bind(on_active=self._perform_profile_selected)
             prof_menu.add_widget(btn)
 
+        prof_menu._add_widget()
+
     def _perform_profile_selected(self, *args):
         '''Event handler to select profile radio button.
         Save the selected config_parser path to the config
         '''
-        _config = self.prof_settings.config_parsers[args[0].config_key]
-        _config_path = _config.filename
         if args[2]:
+            _config = self.prof_settings.config_parsers[args[0].config_key]
+            _config_path = _config.filename
             self.designer_settings.config_parser.set('internal',
-                                                    'default_profile',
-                                                    _config_path)
+                                                     'default_profile',
+                                                     _config_path)
             self.designer_settings.config_parser.write()
 
     def action_btn_recent_files_pressed(self, *args):
