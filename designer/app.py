@@ -1,6 +1,7 @@
 import distutils
 import webbrowser
 import subprocess
+from designer.profiler import Profiler
 
 __all__ = ('DesignerApp', )
 
@@ -16,7 +17,7 @@ from kivy.core.window import Window
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.layout import Layout
 from kivy.factory import Factory
-from kivy.properties import ObjectProperty, BooleanProperty
+from kivy.properties import ObjectProperty, BooleanProperty, StringProperty
 from kivy.clock import Clock
 from kivy.uix import actionbar
 from kivy.garden.filebrowser import FileBrowser
@@ -49,6 +50,7 @@ from designer.project_settings import ProjectSettings
 from designer.designer_settings import DesignerSettings
 from designer.profile_settings import ProfileSettings
 from designer.helper_functions import get_kivy_designer_dir
+from designer.helper_functions import show_alert
 from designer.new_dialog import NewProjectDialog, NEW_PROJECTS
 from designer.eventviewer import EventViewer
 from designer.uix.designer_action_items import DesignerActionProfileCheck
@@ -147,6 +149,11 @@ class Designer(FloatLayout):
        :data:`start_page` is a :class:`~kivy.properties.ObjectProperty`
     '''
 
+    selected_profile = StringProperty('')
+    '''Selected profile settings path
+    :class:`~kivy.properties.StringProperty` and defaults to ''.
+    '''
+
     @property
     def save_window_size(self):
         '''Save window size on exit.
@@ -179,6 +186,11 @@ class Designer(FloatLayout):
             self.project_loader.perform_auto_save,
             int(self.designer_settings.config_parser.getdefault(
                 'global', 'auto_save_time', 5)) * 60)
+
+        self.profiler = Profiler()
+        self.profiler.designer = self
+        self.profiler.bind(on_error=self.on_profiler_error)
+        self.profiler.bind(on_message=self.on_profiler_message)
 
         Window.bind(on_resize=self._write_window_size)
         Window.bind(on_request_close=self.on_request_close)
@@ -302,6 +314,16 @@ class Designer(FloatLayout):
 
         self.set_escape_exit()
 
+    def on_profiler_error(self, *args):
+        '''Display an alert if get an error
+        '''
+        show_alert('Profile error', args[1])
+
+    def on_profiler_message(self, *args):
+        '''Display a message in the status bar
+        '''
+        self.statusbar.show_message(args[1], 5)
+
     def _add_designer_content(self):
         '''Add designer_content to Designer, when a project is loaded
         '''
@@ -320,6 +342,9 @@ class Designer(FloatLayout):
         self.ids['actn_menu_view'].disabled = False
         self.ids['actn_menu_proj'].disabled = False
         self.ids['actn_menu_run'].disabled = False
+
+        self.proj_settings = ProjectSettings(proj_loader=self.project_loader)
+        self.proj_settings.load_proj_settings()
 
         Clock.schedule_once(self.load_view_settings, 0)
 
@@ -965,9 +990,10 @@ class Designer(FloatLayout):
             btn.text = prof_name
             btn.checkbox.active = False
 
-            # if self.designer_settings.config_parser.getdefault('internal',
-            #                             'default_profile', '') == config_path:
-            #     btn.checkbox.active = True
+            if self.designer_settings.config_parser.getdefault('internal',
+                                        'default_profile', '') == config_path:
+                btn.checkbox.active = True
+                self.selected_profile = config_path
 
             btn.config_key = profile
             btn.bind(on_active=self._perform_profile_selected)
@@ -986,6 +1012,7 @@ class Designer(FloatLayout):
                                                      'default_profile',
                                                      _config_path)
             self.designer_settings.config_parser.write()
+            self.selected_profile = _config_path
 
     def action_btn_recent_files_pressed(self, *args):
         '''Event Handler when ActionButton "Recent Projects" is pressed.
@@ -1408,45 +1435,29 @@ class Designer(FloatLayout):
                             auto_dismiss=False)
         self._popup.open()
 
+    def check_selected_prof(self, *args):
+        '''Check if there is a selected build profile.
+        :return: True if ok. Show an alert and returns false if not.
+        '''
+        if self.selected_profile == '' or not \
+                        os.path.isfile(self.selected_profile):
+            show_alert('Profiler error','Please, select a build profile on \'Run\'' +
+                                                    ' -> \'Select Profile\' menu' )
+            return False
+
+        self.profiler.load_profile(self.selected_profile,
+                                   self.project_loader.proj_dir)
+        return True
+
     def action_btn_run_project_pressed(self, *args):
         '''Event Handler when ActionButton "Run" is pressed.
         '''
+        if not self.check_selected_prof():
+            return
         if self.project_loader.file_list == []:
             return
-        args = ''
-        envs = ''
 
-        python_path = self.designer_settings.config_parser.getdefault(
-            'global', 'python_shell_path', '')
-
-        if python_path == '':
-            self.statusbar.show_message("Python Shell Path not specified,"
-                                        " please specify it before running"
-                                        " project")
-            return
-
-        if self.proj_settings and self.proj_settings.config_parser:
-            args = self.proj_settings.config_parser.getdefault('arguments',
-                                                               'arg', '')
-            envs = self.proj_settings.config_parser.getdefault(
-                'env variables', 'env', '')
-            for env in envs.split(' '):
-                self.ui_creator.kivy_console.environment[
-                    env[:env.find('=')]] = env[env.find('=') + 1:]
-
-        for _file in self.project_loader.file_list:
-            if 'main.py' in os.path.basename(_file):
-                self.ui_creator.kivy_console.stdin.write(
-                    '"%s" "%s" %s' % (python_path, _file, args))
-                self.ui_creator.tab_pannel.switch_to(
-                    self.ui_creator.tab_pannel.tab_list[2])
-                return
-
-        self.ui_creator.kivy_console.stdin.write(
-            '"%s" "%s" %s' % (python_path, self.project_loader._app_file, args))
-
-        self.ui_creator.tab_pannel.switch_to(
-            self.ui_creator.tab_pannel.tab_list[2])
+        self.profiler.run()
 
     def on_sandbox_getting_exception(self, *args):
         '''Event Handler for

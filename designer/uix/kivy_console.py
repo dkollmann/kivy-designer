@@ -149,17 +149,17 @@ class KivyConsole(GridLayout):
     '''
 
     readonly = BooleanProperty(False)
-    '''This defines weather a person can enter commands in the console
+    '''This defines whether a person can enter commands in the console
 
     :data:`readonly` is an :class:`~kivy.properties.BooleanProperty`,
     Default to 'False'
     '''
 
-    foreground_color = ListProperty((.5, .5, .5, .93))
+    foreground_color = ListProperty((1, 1, 1, 1))
     '''This defines the color of the text in the console
 
     :data:`foreground_color` is an :class:`~kivy.properties.ListProperty`,
-    Default to '(.5, .5, .5, .93)'
+    Default to '(1, 1, 1, 1)'
     '''
 
     background_color = ListProperty((0, 0, 0, 1))
@@ -214,7 +214,7 @@ class KivyConsole(GridLayout):
     '''
 
     shell = BooleanProperty(False)
-    '''Indicates the weather system shell is used to run the commands
+    '''Indicates the whether system shell is used to run the commands
 
     :data:`shell` is a :class:`~kivy.properties.BooleanProperty`,
     Default to 'False'
@@ -672,8 +672,8 @@ class KivyConsole(GridLayout):
         self.txtinput_run_command_refocus = False
         txtinput_run_command.bind(on_text_validate=interact_with_command)
         txtinput_run_command.bind(focus=self.on_focus)
-        btn_kill = Button(text="kill",
-                          width=27,
+        btn_kill = Button(text="Kill",
+                          width=60,
                           size_hint=(None, 1))
 
         def kill_process(*l):
