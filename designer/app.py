@@ -212,6 +212,12 @@ class Designer(FloatLayout):
         ))
         Window.size = width, height
 
+    def open_repo(self, *args):
+        '''
+        Open the Kivy Designer repository
+        '''
+        webbrowser.open("https://github.com/kivy/kivy-designer")
+
     def open_docs(self, *args):
         '''
         Open the Kivy docs

@@ -44,7 +44,8 @@
     Button:
         text: 'Close'
         size_hint: None, None
-        size: '44pt', '22pt'
+        size: '60pt', '30pt'
+        pos_hint: {'right': 1}
         on_release: root.dispatch('on_cancel')
 
 <InputDialog>:
@@ -80,14 +81,43 @@
             on_press: root.dispatch('on_cancel')
 
 <AboutDialog>:
-    Label:
-        text: 'Kivy Designer'
-        
-    Button:
-        text: 'Close'
-        size_hint: None, None
-        size: '44pt', '22pt'
-        on_release: root.dispatch('on_cancel')
+    Image:
+        source: 'data/logo/kivy-icon-512.png'
+        pos: root.pos
+        opacity: 0.1
+    BoxLayout:
+        orientation: 'vertical'
+        pos: root.pos
+        background_color: 0, 1, 0
+        padding: 10
+        Label:
+            id: title
+            text: 'Kivy Designer'
+            font_size: '24pt'
+            halign: 'center'
+            size_hint_y: None
+            height: '30pt'
+        Label:
+            id: subtitle
+            markup: True
+            text: '[i]Desktop and Mobile development[/i]'
+            font_size: '9pt'
+            halign: 'center'
+            size_hint_y: None
+            height: '15pt'
+        Label:
+            text_size: self.size
+            padding: 30, 20
+            text: '    Kivy Designer is Kivy\'s tool for designing Graphical User Interfaces (GUIs) from Kivy Widgets. \nYou can compose and customize widgets, and test them. It is completely written in Python using Kivy. \nKivy Designer is integrated with Buildozer and Hanga, so you can easily develop and publish your applications to Desktop and Mobile devices.'
+            font_size: '11pt'
+            valign: 'top'
+        Button:
+            text: 'Close'
+            size_hint: None, None
+            size: '60pt', '30pt'
+            pos_hint: {'right': 1}
+            on_release: root.dispatch('on_cancel')
+
 
 #
 # Profile Settings
@@ -1200,6 +1230,11 @@
                     id: actn_btn_wiki
                     text: 'Kivy Docs'
                     on_release: root.open_docs()
+
+                DesignerActionButton:
+                    id: actn_btn_page
+                    text: 'Kivy Designer repo'
+                    on_release: root.open_repo()
                 
                 DesignerActionButton:
                     id: actn_btn_about
