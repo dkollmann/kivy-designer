@@ -194,10 +194,44 @@ class Designer(FloatLayout):
         )
         self.designer_settings.config_parser.write()
 
-    def toogle_fullscreen(self, check, **kwargs):
+    def load_view_settings(self, *args):
+        '''Load "View" menu saved settings
+        '''
+        proj_tree = self.designer_settings.config_parser.getdefault(
+            'view', 'actn_chk_proj_tree', True
+        )
+        if proj_tree == 'False':
+            self.ids.actn_chk_proj_tree.checkbox.active = False
+
+        props_events = self.designer_settings.config_parser.getdefault(
+            'view', 'actn_chk_prop_event', True
+        )
+        if props_events == 'False':
+            self.ids.actn_chk_prop_event.checkbox.active = False
+
+        wid_tree = self.designer_settings.config_parser.getdefault(
+            'view', 'actn_chk_widget_tree', True
+        )
+        if wid_tree == 'False':
+            self.ids.actn_chk_widget_tree.checkbox.active = False
+
+        status_bar = self.designer_settings.config_parser.getdefault(
+            'view', 'actn_chk_status_bar', True
+        )
+        if status_bar == 'False':
+            self.ids.actn_chk_status_bar.checkbox.active = False
+
+        kv_lang_area = self.designer_settings.config_parser.getdefault(
+            'view', 'actn_chk_kv_lang_area', True
+        )
+        if kv_lang_area == 'False':
+            self.ids.actn_chk_kv_lang_area.checkbox.active = False
+
+    def toggle_fullscreen(self, check, **kwargs):
         '''
         Event Handler when ActionCheckButton "Fullscreen" is changed.
         '''
+
         if check.checkbox.active is True:
             Window.fullscreen = "auto"
         else:
@@ -286,6 +320,8 @@ class Designer(FloatLayout):
         self.ids['actn_menu_view'].disabled = False
         self.ids['actn_menu_proj'].disabled = False
         self.ids['actn_menu_run'].disabled = False
+
+        Clock.schedule_once(self.load_view_settings, 0)
 
     def on_statusbar_height(self, *args):
         '''Callback for statusbar.height
@@ -1196,6 +1232,10 @@ class Designer(FloatLayout):
     def action_chk_btn_toolbox_active(self, chk_btn):
         '''Event Handler when ActionCheckButton "Toolbox" is activated.
         '''
+        self.designer_settings.config_parser.set('view',
+                                                    'actn_chk_proj_tree',
+                                                    chk_btn.checkbox.active)
+        self.designer_settings.config_parser.write()
 
         if chk_btn.checkbox.active:
             self._toolbox_parent.add_widget(
@@ -1212,6 +1252,11 @@ class Designer(FloatLayout):
     def action_chk_btn_property_viewer_active(self, chk_btn):
         '''Event Handler when ActionCheckButton "Property Viewer" is activated.
         '''
+
+        self.designer_settings.config_parser.set('view',
+                                                 'actn_chk_prop_event',
+                                                 chk_btn.checkbox.active)
+        self.designer_settings.config_parser.write()
 
         if chk_btn.checkbox.active:
             self._toggle_splitter_widget_tree()
@@ -1244,6 +1289,11 @@ class Designer(FloatLayout):
     def action_chk_btn_widget_tree_active(self, chk_btn):
         '''Event Handler when ActionCheckButton "Widget Tree" is activated.
         '''
+
+        self.designer_settings.config_parser.set('view',
+                                                 'actn_chk_widget_tree',
+                                                 chk_btn.checkbox.active)
+        self.designer_settings.config_parser.write()
 
         if chk_btn.checkbox.active:
             self._toggle_splitter_widget_tree()
@@ -1293,6 +1343,11 @@ class Designer(FloatLayout):
         '''Event Handler when ActionCheckButton "StatusBar" is activated.
         '''
 
+        self.designer_settings.config_parser.set('view',
+                                                 'actn_chk_status_bar',
+                                                 chk_btn.checkbox.active)
+        self.designer_settings.config_parser.write()
+
         if chk_btn.checkbox.active:
             self._statusbar_parent.add_widget(self.statusbar)
             self.statusbar.height = self._statusbar_height
@@ -1305,6 +1360,11 @@ class Designer(FloatLayout):
     def action_chk_btn_kv_area_active(self, chk_btn):
         '''Event Handler when ActionCheckButton "KVLangArea" is activated.
         '''
+
+        self.designer_settings.config_parser.set('view',
+                                                 'actn_chk_kv_lang_area',
+                                                 chk_btn.checkbox.active)
+        self.designer_settings.config_parser.write()
 
         if chk_btn.checkbox.active:
             self.ui_creator.splitter_kv_code_input.height = \
