@@ -454,13 +454,13 @@ class ContextSubMenu(MenuButton):
     def on_scroll_height(self, *args):
         '''Handler for scrollview's height.
         '''
-        self.container.height = max(self.container.height,
+        self.container.height = max(self.container.minimum_height,
                                     self.attached_menu.content.height)
 
     def on_container_height(self, *args):
         '''Handler for container's height.
         '''
-        self.container.height = max(self.container.height,
+        self.container.height = max(self.container.minimum_height,
                                     self.attached_menu.content.height)
 
     def on_child_height(self, *args):
