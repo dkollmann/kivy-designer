@@ -75,6 +75,7 @@ class StatusBar(BoxLayout):
         self.gridlayout.clear_widgets()
         self.gridlayout.add_widget(Label(text=message))
         self.gridlayout.children[0].text = message
+        Clock.unschedule(self._clear_message)
         if duration:
             Clock.schedule_once(self._clear_message, duration)
 

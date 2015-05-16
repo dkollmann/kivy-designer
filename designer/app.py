@@ -563,38 +563,8 @@ class Designer(FloatLayout):
                                             'buildozer',
                                             'create_buildozer_prj', False)
         if create_buildozer_prj:
-            has_error = None
-            buildozer_path = self.designer_settings.config_parser.getdefault(
-                                            'buildozer', 'buildozer_path', '')
-
-            if buildozer_path.strip == "":
-                # try to find buildozer in the first execution
-                # if its not configured
-
-                buildozer_path = distutils.spawn.find_executable('buildozer')
-                if buildozer_path:
-                    self.designer_settings.config_parser.set('buildozer',
-                                                            'buildozer_path',
-                                                            buildozer_path)
-                    self.designer_settings.config_parser.write()
-
-            # if buildozer is configured
-            if buildozer_path:
-                try:
-                    subprocess.call([buildozer_path, "init"], cwd=new_proj_dir)
-                except OSError:
-                    has_error = 'Failed to run buildozer. ' \
-                                'Check if the path is correct.'
-                except Exception as e:
-                    has_error = e.message if e.message else 'Unknown error.'
-            else:
-                has_error = 'Please, add the Buildozer path to ' \
-                            'Kivy Designer settings'
-
-            if has_error:
-                self.statusbar.show_message(has_error, 5)
-            else:
-                self.statusbar.show_message('Project created with Buildozer', 3)
+            shutil.copy(os.path.join(templates_dir, 'default.spec'),
+                        os.path.join(new_proj_dir, 'buildozer.spec'))
 
         self.ui_creator.playground.sandbox.error_active = True
         with self.ui_creator.playground.sandbox:
@@ -614,6 +584,7 @@ class Designer(FloatLayout):
                 self.designer_content.toolbox.add_custom()
 
         self.ui_creator.playground.sandbox.error_active = False
+        self.statusbar.show_message('Project created successfully', 5)
 
     def cleanup(self):
         '''To cleanup everything loaded by the current project before loading
