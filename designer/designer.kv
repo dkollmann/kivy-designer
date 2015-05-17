@@ -516,19 +516,32 @@
 <RecentDialog>:
     select_button: select
     cancel_button: cancel
+    listview: listview
     orientation: 'vertical'
     padding: '5sp'
-    
+
+    BoxLayout:
+        padding: 0, 15
+        ListView:
+            id: listview
+
     BoxLayout:
         size_hint_y: None
-        height: '40pt'
-        padding: '4sp'
+        height: 35
         Button:
             id: select
             text: 'Open Selected'
         Button:
             id: cancel
             text: 'Cancel'
+
+<RecentItemButton>:
+    height: '30sp'
+    text_size: self.width - 50, None
+    shorten: True
+    size_hint_x: 1
+    selected_color: .4, 1.5, 2., 1.
+    deselected_color: 1, 1, 1, 1
 
 <ConfirmationDialog>:
     orientation: 'vertical'
@@ -1070,7 +1083,7 @@
 <Designer>:
     statusbar: statusbar
     actionbar: actionbar
-    start_page: start_page
+    start_page: start_page.__self__
     select_profile_cont_menu: select_profile_cont_menu
 
     ActionBar:

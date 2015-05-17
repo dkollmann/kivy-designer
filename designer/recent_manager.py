@@ -83,6 +83,10 @@ class RecentManager(object):
         f.close()
 
 
+class RecentItemButton(ListItemButton):
+    pass
+
+
 class RecentDialog(BoxLayout):
     '''RecentDialog shows the list of recent files retrieved from RecentManager
        It emits, 'on_select' event when a file is selected and select_button is
@@ -114,16 +118,13 @@ class RecentDialog(BoxLayout):
     def __init__(self, file_list, **kwargs):
         super(RecentDialog, self).__init__(**kwargs)
         self.item_strings = file_list
-        self.list_items = ListItemButton
-        self.list_items.selected_color = [.4, .7, 1., 1.]
-        self.list_items.deselected_color = [1, 1, 1, 1]
+        self.list_items = RecentItemButton
 
         self.adapter = ListAdapter(cls=self.list_items, data=self.item_strings,
                               selection_mode='single',
                               allow_empty_selection=False)
 
-        self.listview = ListView(adapter=self.adapter)
-        self.add_widget(self.listview, 1)
+        self.listview.adapter = self.adapter
 
     def get_selected_project(self, *args):
         '''

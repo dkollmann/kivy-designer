@@ -169,6 +169,7 @@ class Designer(FloatLayout):
         self.recent_manager = RecentManager()
         self.widget_to_paste = None
         self.designer_content = DesignerContent(size_hint=(1, None))
+        self.designer_content = self.designer_content.__self__
 
         self.designer_settings = DesignerSettings()
         self.designer_settings.bind(on_config_change=self._config_change)
@@ -200,9 +201,13 @@ class Designer(FloatLayout):
     def _write_window_size(self, *_):
         '''Write updated window size to config
         '''
+        if Window.size[0] < 800:
+            Window.size = 800, Window.size[1]
         self.designer_settings.config_parser.set(
             'internal', 'window_width', Window.size[0]
         )
+        if Window.size[1] < 600:
+            Window.size = Window.size[0], 600
         self.designer_settings.config_parser.set(
             'internal', 'window_height', Window.size[1]
         )
@@ -348,6 +353,7 @@ class Designer(FloatLayout):
                 return
 
         self.remove_widget(self.start_page)
+        self.start_page.parent = None
         self.add_widget(self.designer_content, 1)
 
         self.ids['actn_btn_new_file'].disabled = False
@@ -631,10 +637,11 @@ class Designer(FloatLayout):
            another project.
         '''
 
-        self.project_loader.cleanup()
+        self.project_loader.cleanup(True)
         self.ui_creator.cleanup()
         self.undo_manager.cleanup()
         self.designer_content.toolbox.cleanup()
+        self.designer_content.tab_pannel.cleanup()
 
         for node in self.proj_tree_view.root.nodes[:]:
             self.proj_tree_view.remove_node(node)
@@ -646,9 +653,6 @@ class Designer(FloatLayout):
         self._curr_proj_changed = False
         self.ui_creator.kv_code_input.text = ""
 
-        self.designer_content.tab_pannel.list_py_code_inputs = []
-        for th in self.designer_content.tab_pannel.tab_list[:-1]:
-            self.designer_content.tab_pannel.remove_widget(th)
 
     def action_btn_open_pressed(self, *args):
         '''Event Handler when ActionButton "Open" is pressed.
@@ -698,6 +702,7 @@ class Designer(FloatLayout):
             self._popup.dismiss()
 
         self.remove_widget(self.designer_content)
+        self.designer_content.parent = None
         self.add_widget(self.start_page, 1)
 
         self.ids['actn_btn_new_file'].disabled = True
@@ -707,6 +712,8 @@ class Designer(FloatLayout):
         self.ids['actn_menu_view'].disabled = True
         self.ids['actn_menu_proj'].disabled = True
         self.ids['actn_menu_run'].disabled = True
+
+        self.project_watcher.stop()
 
         self._curr_proj_changed = False
 
@@ -866,7 +873,6 @@ class Designer(FloatLayout):
            emits 'on_cancel' or equivalent.
         '''
 
-        self._proj_modified_outside = False
         self._popup.dismiss()
 
     def action_btn_save_pressed(self, *args):

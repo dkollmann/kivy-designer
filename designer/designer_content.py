@@ -179,6 +179,14 @@ class DesignerTabbedPanel(TabbedPanel):
         if switch_to:
             self.switch_to(self.tab_list[0])
 
+    def cleanup(self):
+        '''Remove all open tabs
+        '''
+        self.list_py_code_inputs = []
+        for child in self.tab_list[:-1]:
+            self.remove_widget(child)
+        self.switch_to(self.tab_list[0])
+
 
 class DesignerTabbedPanelItem(TabbedPanelItem):
     pass
