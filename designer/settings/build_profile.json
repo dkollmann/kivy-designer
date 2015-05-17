@@ -10,7 +10,7 @@
     "type": "options",
     "title": "Builder",
     "section": "profile",
-    "desc": "Select the builder. Used with Android and iOS only",
+    "desc": "Select the builder. \nUsed with Android and iOS only.",
     "options": ["Buildozer", "Hanga"],
     "key": "builder"
   },
@@ -26,7 +26,7 @@
     "type": "options",
     "title": "Mode",
     "section": "profile",
-    "desc": "Select the build mode",
+    "desc": "Select the build mode.\nUsed with Android and iOS only.",
     "options": ["Debug", "Release"],
     "key": "mode"
   },
@@ -34,21 +34,21 @@
     "type": "bool",
     "title": "Install on Device",
     "section": "profile",
-    "desc": "Automatically install on device. Used with Android and iOS only",
+    "desc": "Automatically install on device. \nUsed with Android and iOS only.",
     "key": "install"
   },
   {
     "type": "bool",
     "title": "Debug",
     "section": "profile",
-    "desc": "Show application output on console. Used with Android and iOS only",
+    "desc": "Show application output on console. \nUsed with Android and iOS only.",
     "key": "debug"
   },
   {
     "type": "bool",
     "title": "Verbose",
     "section": "profile",
-    "desc": "Show verbose information while building the app. Used with Android and iOS only",
+    "desc": "Show verbose information while building the app. \nUsed with Android and iOS only.",
     "key": "verbose"
   }
 ]

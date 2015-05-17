@@ -191,6 +191,8 @@ class Designer(FloatLayout):
         self.profiler.designer = self
         self.profiler.bind(on_error=self.on_profiler_error)
         self.profiler.bind(on_message=self.on_profiler_message)
+        self.profiler.bind(on_run=self.on_profiler_run)
+        self.profiler.bind(on_stop=self.on_profiler_stop)
 
         Window.bind(on_resize=self._write_window_size)
         Window.bind(on_request_close=self.on_request_close)
@@ -322,7 +324,20 @@ class Designer(FloatLayout):
     def on_profiler_message(self, *args):
         '''Display a message in the status bar
         '''
-        self.statusbar.show_message(args[1], 5)
+        duration = 5
+        if len(args) > 2:
+            duration = args[2]
+        self.statusbar.show_message(args[1], duration)
+
+    def on_profiler_run(self, *args):
+        '''When a new process starts
+        '''
+        self.ids.actn_btn_stop_proj.disabled = False
+
+    def on_profiler_stop(self, *args):
+        '''When a process is stopped or finished
+        '''
+        self.ids.actn_btn_stop_proj.disabled = True
 
     def _add_designer_content(self):
         '''Add designer_content to Designer, when a project is loaded
@@ -1448,6 +1463,27 @@ class Designer(FloatLayout):
         self.profiler.load_profile(self.selected_profile,
                                    self.project_loader.proj_dir)
         return True
+
+    def action_btn_stop_project_pressed(self, *args):
+        '''Event handler when ActionButton "Stop" is pressed.
+        '''
+        if not self.check_selected_prof():
+            return
+        self.profiler.stop()
+
+    def action_btn_clean_project_pressed(self, *args):
+        '''Event handler when ActionButton "Clean" is pressed
+        '''
+        if not self.check_selected_prof():
+            return
+        self.profiler.clean()
+
+    def action_btn_build_project_pressed(self, *args):
+        '''Event handler when ActionButton "Build" is pressed
+        '''
+        if not self.check_selected_prof():
+            return
+        self.profiler.build()
 
     def action_btn_run_project_pressed(self, *args):
         '''Event Handler when ActionButton "Run" is pressed.
