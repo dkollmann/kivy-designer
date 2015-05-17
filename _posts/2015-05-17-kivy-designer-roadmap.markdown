@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Kivy Designer Road-map"
+title:  "Kivy Designer Roadmap"
 date:   2015-05-17
 ---
 
