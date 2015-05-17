@@ -17,7 +17,7 @@ I'll be working in a more stable and useful version of Kivy Designer. I'll be fu
 The Kivy Designer interface is not completely user friendly, some tasks, editing a .kv file or a buildozer spec file sometimes can be boring. I hope to improve it.
 
 
-Actually the Kivy Designer has no tutorials nether documentation. So I'll create some **guides and examples to show to new developers how to get started with this IDE.**
+Actually the Kivy Designer has no tutorials neither documentation. So I'll create some **guides and examples to show to new developers how to get started with this IDE.**
 
 I have a big list of open issues to work in the next months, [you can read this list here](https://github.com/aron-bordin/kivy-designer/issues).
 
