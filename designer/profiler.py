@@ -63,7 +63,7 @@ class Desktop(Builder):
             self.profiler.dispatch('on_error', 'Cannot find main.py')
             return
 
-        self.ui_creator.kivy_console.stdin.write(
+        self.ui_creator.kivy_console.run_command(
                     '"%s" "%s" %s' % (python_path, py_main, args))
         self.ui_creator.tab_pannel.switch_to(
             self.ui_creator.tab_pannel.tab_list[2])
@@ -143,6 +143,7 @@ class Profiler(EventDispatcher):
 
     def __init__(self, **kwargs):
         super(Profiler, self).__init__(**kwargs)
+        self.profile_config = ConfigParser(name='profiler')
 
     def _update_profile(self):
         '''Reload the profile configuration
@@ -165,7 +166,6 @@ class Profiler(EventDispatcher):
         self.profile_path = prof_path
         self.project_path = proj_path
 
-        self.profile_config = ConfigParser(name='profiler')
         self.profile_config.read(self.profile_path)
 
         if self.pro_builder == 'Buildozer':
