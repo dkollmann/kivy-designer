@@ -37,7 +37,7 @@ Take a look on how you can help me:
 * **Do you have an idea??**
 	* **I love ideas. Share it with me :)**
 * Contributions are always welcome:)
-	* Kivy projects has a big and helpful community. If you are interested, contributions are always welcome :)
+	* Kivy projects have a big and helpful community. If you are interested, contributions are always welcome :)
 
 
 If you know how to help me with the topics above, please, contact me with aron.bordin@gmail.com, aronbordin on IRC, or just open an issue in my fork.
