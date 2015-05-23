@@ -17,7 +17,8 @@ from kivy.core.window import Window
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.layout import Layout
 from kivy.factory import Factory
-from kivy.properties import ObjectProperty, BooleanProperty, StringProperty
+from kivy.properties import ObjectProperty, BooleanProperty, \
+                            StringProperty, partial
 from kivy.clock import Clock
 from kivy.uix import actionbar
 from kivy.garden.filebrowser import FileBrowser
@@ -329,7 +330,7 @@ class Designer(FloatLayout):
     def on_profiler_message(self, *args):
         '''Display a message in the status bar
         '''
-        duration = 5
+        duration = None
         if len(args) > 2:
             duration = args[2]
         self.statusbar.show_message(args[1], duration)
@@ -653,7 +654,6 @@ class Designer(FloatLayout):
         self._curr_proj_changed = False
         self.ui_creator.kv_code_input.text = ""
 
-
     def action_btn_open_pressed(self, *args):
         '''Event Handler when ActionButton "Open" is pressed.
         '''
@@ -865,8 +865,12 @@ class Designer(FloatLayout):
             except Exception as e:
                 self.statusbar.show_message('Cannot load Project: %s' %
                                             (str(e)))
+                print(traceback.format_exc())
 
         self.ui_creator.playground.sandbox.error_active = False
+        Clock.schedule_once(partial(self.ui_creator.kivy_console.run_command,
+            'cd %s' % (self.project_loader.proj_dir)
+        ), 1)
 
     def _cancel_popup(self, *args):
         '''EventHandler for all self._popup when self._popup.content
@@ -1462,8 +1466,8 @@ class Designer(FloatLayout):
         '''
         if self.selected_profile == '' or not \
                         os.path.isfile(self.selected_profile):
-            show_alert('Profiler error','Please, select a build profile on \'Run\'' +
-                                                    ' -> \'Select Profile\' menu' )
+            show_alert('Profiler error', 'Please, select a build profile on'
+                            '\'Run\' -> \'Select Profile\' menu')
             return False
 
         self.profiler.load_profile(self.selected_profile,

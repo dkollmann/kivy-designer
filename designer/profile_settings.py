@@ -232,6 +232,7 @@ class ProfileSettings(Settings):
         '''Event handler for button "Use this Profile" press
         '''
         self.selected_config = self.interface.content.current_panel.config
+        self.settings_changed = True
 
     def on_current_config(self, *args):
         ''' Event handler to panel change

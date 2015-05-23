@@ -66,7 +66,7 @@ class DesignerSettings(Settings):
         path = self.config_parser.getdefault(
             'global', 'python_shell_path', '')
 
-        if path == "":
+        if path.strip() == '':
             self.config_parser.set('global', 'python_shell_path',
                                    sys.executable)
             self.config_parser.write()

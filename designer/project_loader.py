@@ -112,8 +112,11 @@ class ProjectLoader(object):
         '''
 
         file_list = []
-        if '.designer' in path:
+        if '.designer' in path or '.buildozer' in path:
             return []
+
+        if os.path.isfile(path):
+            path = os.path.dirname(path)
 
         sys.path.insert(0, path)
         self._dir_list.append(path)
@@ -123,7 +126,7 @@ class ProjectLoader(object):
                 file_list += self._get_file_list(file_path)
             else:
                 # Consider only kv, py and buildozer(spec) files
-                if file_path[file_path.rfind('.'):] in [".py", ".spec", ".kv"]:
+                if file_path[file_path.rfind('.'):] in [".py", ".spec"]:
                     if os.path.dirname(file_path) == self.proj_dir:
                         file_list.insert(0, file_path)
                     else:
@@ -1002,6 +1005,7 @@ class ProjectLoader(object):
 
         run_pos = s.rfind('().run()')
 
+        i = None
         if run_pos != -1:
             run_pos -= 1
             while not s[run_pos].isspace():
@@ -1011,7 +1015,7 @@ class ProjectLoader(object):
             while s[i] == ' ':
                 i -= 1
 
-        if i == run_pos - 1 or _r != []:
+        if i is not None and i == run_pos - 1 or _r != []:
             if i == run_pos - 1:
                 s = s.replace('%s().run()' % self._app_class, '')
 

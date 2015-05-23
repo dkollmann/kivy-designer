@@ -10,8 +10,8 @@
     "type": "options",
     "title": "Builder",
     "section": "profile",
-    "desc": "Select the builder. \nUsed with Android and iOS only.",
-    "options": ["Buildozer", "Hanga"],
+    "desc": "Select the builder.",
+    "options": ["Desktop", "Buildozer", "Hanga"],
     "key": "builder"
   },
   {

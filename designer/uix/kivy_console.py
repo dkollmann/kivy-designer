@@ -80,6 +80,7 @@ Tab            If there is nothing before the cursur when tab is pressed
                     the commands matching the text before cursur will
                     be displayed
 '''
+import re
 
 __all__ = ('KivyConsole', )
 
@@ -236,6 +237,7 @@ class KivyConsole(GridLayout):
 
     def __init__(self, **kwargs):
         self.register_event_type('on_subprocess_done')
+        self.register_event_type('on_command_list_done')
         super(KivyConsole, self).__init__(**kwargs)
         # initialisations
         self.txtinput_command_line_refocus = False
@@ -249,6 +251,8 @@ class KivyConsole(GridLayout):
             self.cur_dir = os.getcwd()
         else:
             self.cur_dir = os.getcwdu()
+        self.cur_dir = os.getcwdu()
+        self.command_list = []  # list of cmds to be executed
         self.stdout = std_in_out(self, 'stdout')
         self.stdin = std_in_out(self, 'stdin')
         # self.stderror = stderror(self)
@@ -269,11 +273,24 @@ class KivyConsole(GridLayout):
         if not self._username:
             self._username = os.environ.get('USERNAME', 'unknown')
 
-    def run_command(self, command):
+    def run_command(self, command, *args):
         '''Run a command using Kivy Console.
         The output will be visible in the Kivy console
         '''
-        self.stdin.write(command)
+        if isinstance(command, list):
+            self.command_list = command
+        else:
+            self.command_list = [command]
+        self._run_command_list()
+
+    def _run_command_list(self, *kwargs):
+        '''Runs a list of commands
+        '''
+        if self.command_list:
+            self.stdin.write(self.command_list.pop(0))
+            self.bind(on_subprocess_done=self._run_command_list)
+        else:
+            self.dispatch('on_command_list_done')
 
     def clear(self, *args):
         '''Clear the Kivy Console area
@@ -419,13 +436,8 @@ class KivyConsole(GridLayout):
                     starts_with_is_not_None = starts_with is not None
                     try:
                         dir_list = os.listdir(cur_dir)
-<<<<<<< HEAD
                     except OSError as err:
-                        self.add_to_cache(u''.join((err.strerror, '\n')))
-=======
-                    except OSError, err:
                         self.add_to_cache(''.join((err.strerror, '\n')))
->>>>>>> fix some console bugs and some improvements
                         return
                     if starts_with_is_not_None:
                         len_starts_with = len(starts_with)
@@ -570,7 +582,8 @@ class KivyConsole(GridLayout):
         _string = None
 
     def kill_process(self, *l):
-        self.popen_obj.kill()
+        if self.popen_obj:
+            self.popen_obj.kill()
 
     def on_enter(self, *l):
         '''When the user press enter and wants to run a command
@@ -597,7 +610,7 @@ class KivyConsole(GridLayout):
                 self._initialize(0)
 
             self._focus(txtinput_command_line, True)
-            Clock.schedule_once(self._change_txtcache, .1)
+            Clock.schedule_once(self._change_txtcache, -1)
             self.dispatch('on_subprocess_done')
 
         def run_cmd(*l):
@@ -682,6 +695,8 @@ class KivyConsole(GridLayout):
             self.clear()
             txtinput_command_line.text = self.prompt()
             self.txtinput_command_line_refocus = True
+            self.command_status = 'closed'
+            self.dispatch('on_subprocess_done')
             return
         if command.startswith('cd ') or command.startswith('export '):
             if command[0] == 'e':
@@ -692,6 +707,7 @@ class KivyConsole(GridLayout):
                     self.environment = os.environ.copy()
             else:
                 try:
+                    command = re.sub('[ ]+', ' ', command)
                     if command[3] == os.sep:
                         os.chdir(command[3:])
                     else:
@@ -701,9 +717,10 @@ class KivyConsole(GridLayout):
                     Logger.debug('Shell Console: err:' + err.strerror +
                                  ' directory:' + command[3:])
                     add_to_cache(''.join((err.strerror, '\n')))
-            add_to_cache(''.join((txtinput_command_line.text, '\n')))
             txtinput_command_line.text = self.prompt()
             self.txtinput_command_line_refocus = True
+            self.command_status = 'closed'
+            self.dispatch('on_subprocess_done')
             return
 
         txtinput_command_line.text = self.prompt()
@@ -749,6 +766,11 @@ class KivyConsole(GridLayout):
     def on_subprocess_done(self, *args):
         '''Event handler for when a process was killed
         or just finished the execution.
+        '''
+        pass
+
+    def on_command_list_done(self, *args):
+        '''Event handler for when the whole command list was executed or killed
         '''
         pass
 
