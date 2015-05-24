@@ -761,13 +761,6 @@ class Designer(FloatLayout):
                 self._select_class_popup.dismiss()
 
         except:
-            self.about_dlg = AboutDialog()
-            self._popup = Popup(title='About Kivy Designer',
-                                content=self.about_dlg,
-                                size_hint=(None, None), size=(600, 400),
-                                auto_dismiss=False)
-            self._popup.open()
-            self.about_dlg.bind(on_cancel=self._cancel_popup)
 
             invalid_selection = Popup(title='Invalid Selection',
                                       content=Label(text=(
