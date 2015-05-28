@@ -1488,6 +1488,13 @@ class Designer(FloatLayout):
             return
         self.profiler.build()
 
+    def action_btn_rebuild_project_pressed(self, *args):
+        '''Event handler when ActionButton "Build" is pressed
+        '''
+        if not self.check_selected_prof():
+            return
+        self.profiler.rebuild()
+
     def action_btn_run_project_pressed(self, *args):
         '''Event Handler when ActionButton "Run" is pressed.
         '''

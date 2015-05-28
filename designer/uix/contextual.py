@@ -246,28 +246,33 @@ class ContextMenu(TabbedPanel):
         if x < 0:
             x = 0
         self.bubble.x = x
-        # bubble position relative with the parent
+        # bubble position relative with the parent center
         x_relative = x - (wx - self.bubble.width / 4)
+        x_range = self.bubble.width / 4  # consider 25% as the range
 
         # determine if we display the dropdown upper or lower to the widget
         h_bottom = wy - self.bubble.height
         h_top = win.height - (wtop + self.bubble.height)
+
+        def _get_hpos():
+            '''Compare the position of the widget with the parent
+            to display the arrow in the correct position
+            '''
+            _pos = 'mid'
+            if x_relative == 0:
+                _pos = 'mid'
+            elif x_relative < -x_range:
+                _pos = 'right'
+            elif x_relative > x_range:
+                _pos = 'left'
+            return _pos
+
         if h_bottom > 0:
             self.bubble.top = wy
-            if x_relative == 0:
-                self.bubble.arrow_pos = 'top_mid'
-            elif x_relative < 0:
-                self.bubble.arrow_pos = 'top_right'
-            else:
-                self.bubble.arrow_pos = 'top_left'
+            self.bubble.arrow_pos = 'top_' + _get_hpos()
         elif h_top > 0:
             self.bubble.y = wtop
-            if x_relative == 0:
-                self.bubble.arrow_pos = 'bottom_mid'
-            elif x_relative < 0:
-                self.bubble.arrow_pos = 'bottom_right'
-            else:
-                self.bubble.arrow_pos = 'bottom_left'
+            self.bubble.arrow_pos = 'bottom_' + _get_hpos()
         else:
             # none of both top/bottom have enough place to display the widget at
             # the current size. Take the best side, and fit to it.
@@ -275,21 +280,11 @@ class ContextMenu(TabbedPanel):
             if height == h_bottom:
                 self.bubble.top = wy
                 self.bubble.height = wy
-                if x_relative == 0:
-                    self.bubble.arrow_pos = 'top_mid'
-                elif x_relative < 0:
-                    self.bubble.arrow_pos = 'top_right'
-                else:
-                    self.bubble.arrow_pos = 'top_left'
+                self.bubble.arrow_pos = 'top_' + _get_hpos()
             else:
                 self.bubble.y = wtop
                 self.bubble.height = win.height - wtop
-                if x_relative == 0:
-                    self.bubble.arrow_pos = 'bottom_mid'
-                elif x_relative < 0:
-                    self.bubble.arrow_pos = 'bottom_right'
-                else:
-                    self.bubble.arrow_pos = 'bottom_left'
+                self.bubble.arrow_pos = 'bottom_' + _get_hpos()
 
     def on_touch_down(self, touch):
         '''Default Handler for 'on_touch_down'

@@ -27,7 +27,7 @@ class DesignerActionProfileCheck(ActionCheckButton):
 
     def __init__(self, **kwargs):
         super(DesignerActionProfileCheck, self).__init__(**kwargs)
-        self.minimum_width = 150
+        self.minimum_width = 200
         self.size_hint_y = None
         self.height = sp(48)
 
@@ -44,7 +44,7 @@ class DesignerActionButton(ActionButton):
 
     def __init__(self, **kwargs):
         super(DesignerActionButton, self).__init__(**kwargs)
-        self.minimum_width = 150
+        self.minimum_width = 200
         self.on_press = self.on_btn_press
 
     def on_btn_press(self, *args):

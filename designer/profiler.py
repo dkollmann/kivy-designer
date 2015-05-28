@@ -3,7 +3,7 @@ import shutil
 
 from kivy.event import EventDispatcher
 from kivy.properties import StringProperty, ObjectProperty, \
-    ConfigParser, ConfigParserProperty
+    ConfigParser, ConfigParserProperty, partial, Clock
 from kivy.uix.popup import Popup
 import designer
 from designer.confirmation_dialog import ConfirmationDialog
@@ -114,7 +114,7 @@ class Buildozer(Builder):
 
         return [cd, " ".join(args)]
 
-    def build(self):
+    def build(self, *args):
         '''Build the Buildozer project.
         Will read the necessary information from the profile and build the app
         '''
@@ -128,7 +128,27 @@ class Buildozer(Builder):
         self.profiler.dispatch('on_message', 'Building project...')
         self.ui_creator.kivy_console.bind(on_command_list_done=self.on_build)
 
-    def run(self):
+    def rebuild(self, *args):
+        '''Update project dependencies, and build it again
+        '''
+        self.clean()
+        self.profiler.bind(on_clean=self._rebuild)
+
+    def _rebuild(self, *args):
+        '''Perform the project rebuild
+        '''
+        cmd = self._create_command(['update'])
+        if not self.can_run:
+            self.last_command = self.rebuild
+            return
+        self.run_command(cmd)
+
+        self.profiler.dispatch('on_message',
+                               'Updating project dependencies...')
+        self.ui_creator.kivy_console.bind(on_command_list_done=self.build)
+
+
+    def run(self, *args):
         '''Run the build command and then run the application on the device
         '''
         self.build()
@@ -161,7 +181,7 @@ class Buildozer(Builder):
         self.profiler.dispatch('on_message', 'Installing on device...')
         self.ui_creator.kivy_console.bind(on_command_list_done=self.on_deploy)
 
-    def clean(self):
+    def clean(self, *args):
         '''Clean the project directory
         '''
         cmd = self._create_command(['clean'])
@@ -258,6 +278,7 @@ class Desktop(Builder):
             self.profiler.dispatch('on_error', 'Python Shell Path not '
                                    'specified.'
                                    '\n\nUpdate it on \'File\' -> \'Settings\'')
+            self.can_run = False
             return
 
         self.args = self.proj_settings.config_parser.getdefault(
@@ -276,10 +297,14 @@ class Desktop(Builder):
             self.ui_creator.kivy_console.environment[
                 env[:env.find('=')]] = env[env.find('=') + 1:]
 
+        self.can_run = True
+
     def run(self):
         '''Run the project using Python
         '''
         self._get_python()
+        if not self.can_run:
+            return
 
         py_main = os.path.join(self.profiler.project_path, 'main.py')
 
@@ -306,6 +331,8 @@ class Desktop(Builder):
     def clean(self, *args):
         '''Remove .pyc files and __pycache__ folder
         '''
+        # here it's necessary to stop the listener as long as the
+        # python is managing files
         self.proj_watcher.stop()
         for _file in os.listdir(self.profiler.project_path):
             ext = _file.split('.')[-1]
@@ -322,7 +349,10 @@ class Desktop(Builder):
         '''Compile all .py to .pyc
         '''
         self._get_python()
+        if not self.can_run:
+            return
 
+        self.proj_watcher.stop()
         proj_path = self.profiler.project_path
 
         self.run_command(
@@ -334,9 +364,16 @@ class Desktop(Builder):
         self.profiler.dispatch('on_message', 'Building project...')
         self.ui_creator.kivy_console.bind(on_command_list_done=self.on_build)
 
+    def rebuild(self, *args):
+        '''Clean and build the project
+        '''
+        self.clean()
+        self.build()
+
     def on_build(self, *args):
         '''on_build event handler
         '''
+        self.proj_watcher.start_watching(self.profiler.project_path)
         self.profiler.dispatch('on_message', 'Build complete', 5)
         self.profiler.dispatch('on_build')
 
@@ -441,6 +478,11 @@ class Profiler(EventDispatcher):
         '''Build project
         '''
         self.builder.build()
+
+    def rebuild(self):
+        '''Rebuild project
+        '''
+        self.builder.rebuild()
 
     def load_profile(self, prof_path, proj_path):
         '''Read the settings

@@ -255,6 +255,7 @@ class KivyConsole(GridLayout):
         self.command_list = []  # list of cmds to be executed
         self.stdout = std_in_out(self, 'stdout')
         self.stdin = std_in_out(self, 'stdin')
+        self.popen_obj = None
         # self.stderror = stderror(self)
         # delayed initialisation
         Clock.schedule_once(self._initialize)
@@ -286,6 +287,7 @@ class KivyConsole(GridLayout):
     def _run_command_list(self, *kwargs):
         '''Runs a list of commands
         '''
+        self.kill_process()
         if self.command_list:
             self.stdin.write(self.command_list.pop(0))
             self.bind(on_subprocess_done=self._run_command_list)
@@ -611,6 +613,7 @@ class KivyConsole(GridLayout):
 
             self._focus(txtinput_command_line, True)
             Clock.schedule_once(self._change_txtcache, -1)
+            self.command_status = 'closed'
             self.dispatch('on_subprocess_done')
 
         def run_cmd(*l):
@@ -661,8 +664,7 @@ class KivyConsole(GridLayout):
                     self.command_status = 'closed'
                 sys.stdout = prev_stdout
             self.popen_obj = None
-            Clock.schedule_once(remove_command_interaction_widgets)
-            self.command_status = 'closed'
+            Clock.schedule_once(remove_command_interaction_widgets, 0)
 
         # append text to textcache
         add_to_cache(''.join((self.txtinput_command_line.text, '\n')))
