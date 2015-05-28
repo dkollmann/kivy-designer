@@ -1,18 +1,48 @@
-from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem,\
-    TabbedPanelHeader, TabbedPanelContent
-from kivy.properties import ObjectProperty, StringProperty,\
-    BooleanProperty, NumericProperty
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelHeader, \
+                                TabbedPanelContent
+from kivy.properties import ObjectProperty, BooleanProperty, NumericProperty
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.image import Image
-from kivy.uix.bubble import Bubble, BubbleButton
+from kivy.uix.bubble import Bubble
 from kivy.lang import Builder
 from kivy.metrics import dp
 from kivy.uix.scrollview import ScrollView
 from kivy.clock import Clock
+from kivy.uix.actionbar import ActionView
+
+
+class DesignerActionView(ActionView):
+
+    def _layout_random(self):
+        '''Fixes bug when the screen is too small
+        '''
+        self.overflow_group.show_group = self.show_group
+        super(DesignerActionView, self)._layout_random()
+
+    def show_group(self, *l):
+        '''Fixes bug when the screen is too small
+        '''
+        over = self.overflow_group
+        over.clear_widgets()
+        for item in over._list_overflow_items + over.list_action_item:
+            item.inside_group = True
+            if item.parent is not None:
+                item.parent.remove_widget(item)
+            group = self.get_group(item)
+            if group is not None and group.disabled:
+                continue
+            if not isinstance(item, ContextSubMenu):
+                over._dropdown.add_widget(item)
+
+    def get_group(self, item):
+        '''Get the ActionGroup of an item
+        '''
+        for group in self._list_action_group:
+            if item in group.list_action_item:
+                return group
+        return None
 
 
 class MenuBubble(Bubble):
@@ -149,6 +179,8 @@ class ContextMenu(TabbedPanel):
            the height of the dropdown, the placement might be
            lower or higher off that widget.
         '''
+        if widget.parent is None:
+            return
         # ensure we are not already attached
         if self.attach_to is not None:
             self.dismiss()
@@ -179,7 +211,7 @@ class ContextMenu(TabbedPanel):
         pass
 
     def dismiss(self, *largs):
-        '''Remove the dropdown widget from the iwndow, and detach itself from
+        '''Remove the dropdown widget from the window, and detach itself from
         the attached widget.
         '''
         if self.bubble.parent:
@@ -306,6 +338,11 @@ class ContextMenu(TabbedPanel):
     def add_widget(self, widget, index=0):
         '''Add a widget.
         '''
+        if self.content is None:
+            return
+        if widget.parent is not None:
+            widget.parent.remove_widget(widget)
+
         if self.tab_list and widget == self.tab_list[0].content or\
                 widget == self._current_tab.content or \
                 self.content == widget or\
@@ -546,10 +583,11 @@ if __name__ == '__main__':
 #:import ContextMenu contextual.ContextMenu
 
 <ContextMenu>:
+<DesignerActionView>:
 <Test>:
     ActionBar:
         pos_hint: {'top':1}
-        ActionView:
+        DesignerActionView:
             use_separator: True
             ActionPrevious:
                 title: 'Action Bar'
@@ -562,6 +600,7 @@ if __name__ == '__main__':
                 text: 'Btn1'
             ActionButton:
                 text: 'Btn2'
+                disabled: True
             ActionButton:
                 text: 'Btn3'
             ActionButton:

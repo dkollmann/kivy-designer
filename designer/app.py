@@ -202,13 +202,9 @@ class Designer(FloatLayout):
     def _write_window_size(self, *_):
         '''Write updated window size to config
         '''
-        if Window.size[0] < 800:
-            Window.size = 800, Window.size[1]
         self.designer_settings.config_parser.set(
             'internal', 'window_width', Window.size[0]
         )
-        if Window.size[1] < 600:
-            Window.size = Window.size[0], 600
         self.designer_settings.config_parser.set(
             'internal', 'window_height', Window.size[1]
         )
@@ -266,7 +262,7 @@ class Designer(FloatLayout):
         height = int(self.designer_settings.config_parser.getdefault(
             'internal', 'window_height', 600
         ))
-        Window.size = width, height
+        Window.size = max(width, 800), max(height, 600)
 
     def open_repo(self, *args):
         '''
