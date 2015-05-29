@@ -39,9 +39,12 @@ New improvements:
 * [add view -> fullscreen](https://github.com/aron-bordin/kivy-designer/issues/50)
 * [Save View settings](https://github.com/aron-bordin/kivy-designer/issues/44)
 * [Close project button](https://github.com/aron-bordin/kivy-designer/issues/43)
+* [File -> new File](https://github.com/aron-bordin/kivy-designer/issues/94)
 * [Buildozer integration](https://github.com/aron-bordin/kivy-designer/issues/30)
 * [New menu](https://github.com/aron-bordin/kivy-designer/issues/91)
 * [Android logcat](https://github.com/aron-bordin/kivy-designer/issues/34)
+* [small UI -> change the menu arrow position depending the parent position](https://github.com/aron-bordin/kivy-designer/issues/95)
+* [execute a list of commands on Kivy Console](https://github.com/aron-bordin/kivy-designer/issues/96)
 
 Bugs(some bugs are related):
 
@@ -66,7 +69,10 @@ Bugs(some bugs are related):
 * [load_proj_config do nothing](https://github.com/aron-bordin/kivy-designer/issues/84)
 * [autosave backup .buildozer and bin folder](https://github.com/aron-bordin/kivy-designer/issues/85)
 * [Improve rj preferences UI](https://github.com/aron-bordin/kivy-designer/issues/20)
-
+* [project config problem with path](https://github.com/aron-bordin/kivy-designer/issues/97)
+* [Project loader cannot read some events](https://github.com/aron-bordin/kivy-designer/issues/92)
+* [KD accepts any 'runTouchApp' string as app run](https://github.com/aron-bordin/kivy-designer/issues/93)
+* [importing both .py and .pyc modules](https://github.com/aron-bordin/kivy-designer/issues/81)
 
 
 ## Next week
