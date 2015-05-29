@@ -854,7 +854,6 @@ class Designer(FloatLayout):
             except Exception as e:
                 self.statusbar.show_message('Cannot load Project: %s' %
                                             (str(e)))
-                print(traceback.format_exc())
 
         self.ui_creator.playground.sandbox.error_active = False
         Clock.schedule_once(partial(self.ui_creator.kivy_console.run_command,

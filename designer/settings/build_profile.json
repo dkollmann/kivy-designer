@@ -41,7 +41,7 @@
     "type": "bool",
     "title": "Debug",
     "section": "profile",
-    "desc": "Show application output on console. \nUsed with Android and iOS only.",
+    "desc": "Show application output on console. \nUsed with Android(logcat)",
     "key": "debug"
   },
   {

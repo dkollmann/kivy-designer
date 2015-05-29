@@ -162,7 +162,10 @@ class Buildozer(Builder):
     def _run(self, *args):
         '''Perform the buildozer run
         '''
-        cmd = self._create_command(['run'])
+        cmds = ['run']
+        if self.profiler.pro_debug and self.profiler.pro_target == 'Android':
+            cmds.append('logcat')
+        cmd = self._create_command(cmds)
         if not self.can_run:
             return
         self.run_command(cmd)

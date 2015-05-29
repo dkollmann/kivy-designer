@@ -251,7 +251,6 @@ class KivyConsole(GridLayout):
             self.cur_dir = os.getcwd()
         else:
             self.cur_dir = os.getcwdu()
-        self.cur_dir = os.getcwdu()
         self.command_list = []  # list of cmds to be executed
         self.stdout = std_in_out(self, 'stdout')
         self.stdin = std_in_out(self, 'stdin')
@@ -714,7 +713,10 @@ class KivyConsole(GridLayout):
                         os.chdir(command[3:])
                     else:
                         os.chdir(self.cur_dir + os.sep + command[3:])
-                    self.cur_dir = os.getcwdu()
+                    if sys.version_info >= (3, 0):
+                        self.cur_dir = os.getcwd()
+                    else:
+                        self.cur_dir = os.getcwdu()
                 except OSError as err:
                     Logger.debug('Shell Console: err:' + err.strerror +
                                  ' directory:' + command[3:])
