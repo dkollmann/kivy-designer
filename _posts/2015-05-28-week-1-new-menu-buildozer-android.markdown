@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Week 1 - Buildozer integration and new menu"
-date:   2015-05-17
+date:   2015-05-28
 ---
 
 Hi!
