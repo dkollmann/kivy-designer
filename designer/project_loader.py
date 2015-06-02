@@ -30,7 +30,8 @@ PROJ_FILE_CONFIG = os.path.join(PROJ_DESIGNER, 'file_config.ini')
 
 
 class Comment(object):
-
+    '''Comment is an Abstract class for representing a commentary.
+    '''
     def __init__(self, string, path, _file):
         super(Comment, self).__init__()
         self.string = string
@@ -112,8 +113,11 @@ class ProjectLoader(object):
         '''
 
         file_list = []
-        if '.designer' in path:
+        if '.designer' in path or '.buildozer' in path:
             return []
+
+        if os.path.isfile(path):
+            path = os.path.dirname(path)
 
         sys.path.insert(0, path)
         self._dir_list.append(path)
@@ -315,7 +319,8 @@ class ProjectLoader(object):
                 else:
                     self._is_root_already_in_factory = False
 
-                root_rule = Builder.load_string(re.sub(r'\s+on_\w+:\w+',
+                re_kv_event = r'(\s+on_\w+\s*:.+)|([\s\w\d]+:[\.\s\w]+\(.*\))'
+                root_rule = Builder.load_string(re.sub(re_kv_event,
                                                        '', kv_string))
                 if root_rule:
                     self.root_rule = RootRule(root_rule.__class__.__name__,
@@ -485,7 +490,7 @@ class ProjectLoader(object):
                 self.dict_file_type_and_path[file_type] + '">\n'
         string += '</file_type_and_dirs>\n'
 
-        f = open(os.path.join(self.proj_dir, PROJ_CONFIG), 'w')
+        f = open(os.path.join(self.proj_dir, PROJ_FILE_CONFIG), 'w')
         f.write(string)
         f.close()
 
@@ -515,9 +520,9 @@ class ProjectLoader(object):
             os.mkdir(auto_save_dir)
 
         for _file in os.listdir(self.proj_dir):
-            if '.designer' in _file:
+            files_to_skip = ['.designer', 'bin', '.buildozer']
+            if list(set(files_to_skip) & {_file}):
                 continue
-
             old_file = os.path.join(self.proj_dir, _file)
             new_file = os.path.join(auto_save_dir, _file)
             if os.path.isdir(old_file):
@@ -909,7 +914,7 @@ class ProjectLoader(object):
            defined/used in string s.
         '''
 
-        if 'runTouchApp' in s:
+        if 'runTouchApp(' in s:
             self._app_class = 'runTouchApp'
             return True
 
@@ -917,7 +922,10 @@ class ProjectLoader(object):
             for _class in re.findall(r'\bclass\b.+:', s):
                 b_index1 = _class.find('(')
                 b_index2 = _class.find(')')
-                if _class[b_index1 + 1:b_index2].strip() == 'App':
+                classes = _class[b_index1 + 1:b_index2]
+                classes = re.sub(r'[\s]+', '', classes)
+                classes = classes.split(',')
+                if 'App' in classes:
                     self._app_class = _class[_class.find(' '):b_index1].strip()
                     return True
 
@@ -959,23 +967,25 @@ class ProjectLoader(object):
 
         # If cannot find due to above methods, search every file
         for _file in self.file_list:
-            f = open(_file, 'r')
-            s = f.read()
-            f.close()
-            if not self._app_file and self._app_in_string(s):
-                self._app_module = self._import_module(s, _file)
-                self._app_file = _file
+            if _file[_file.rfind('.') + 1:] == 'py':
+                f = open(_file, 'r')
+                s = f.read()
+                f.close()
+                if not self._app_file and self._app_in_string(s):
+                    self._app_module = self._import_module(s, _file)
+                    self._app_file = _file
 
-            for _rule in to_find[:]:
-                if _rule.file:
-                    continue
+                for _rule in to_find[:]:
+                    if _rule.file:
+                        continue
 
-                if re.search(r'\bclass\s*%s+.+:' % (_rule.name), s):
-                    mod = self._import_module(s, _file, _fromlist=[_rule.name])
-                    if hasattr(mod, _rule.name):
-                        _rule.file = _file
-                        to_find.remove(_rule)
-                        _rule.module = mod
+                    if re.search(r'\bclass\s*%s+.+:' % (_rule.name), s):
+                        mod = self._import_module(s, _file,
+                                                  _fromlist=[_rule.name])
+                        if hasattr(mod, _rule.name):
+                            _rule.file = _file
+                            to_find.remove(_rule)
+                            _rule.module = mod
 
         # Cannot Find App, So, use default runTouchApp
         if not self._app_file:
@@ -1002,6 +1012,7 @@ class ProjectLoader(object):
 
         run_pos = s.rfind('().run()')
 
+        i = None
         if run_pos != -1:
             run_pos -= 1
             while not s[run_pos].isspace():
@@ -1011,7 +1022,7 @@ class ProjectLoader(object):
             while s[i] == ' ':
                 i -= 1
 
-        if i == run_pos - 1 or _r != []:
+        if i is not None and i == run_pos - 1 or _r != []:
             if i == run_pos - 1:
                 s = s.replace('%s().run()' % self._app_class, '')
 
