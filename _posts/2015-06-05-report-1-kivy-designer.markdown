@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Report 1 - Bounding period and two weeks of code"
-date:   2015-05-28
+date:   2015-06-05
 ---
 
 Hi!
@@ -18,7 +18,7 @@ I started to work with **Kivy Designer** two weeks ago. I made a good progress w
 * I studied a lot about Kivy, reading the documentation and fixing some small bugs
 * Added a initial support for Python 3
 * Fixed Kivy Designer code style
-* Tried to help users on #Kivy(I'm not yet experienced enough to support major part of the users, but I've been always reading and trying to help when possible)
+* Tried to help users on #kivy(I'm not yet experienced enough to support some users and usually busy, but when possible, I check the IRC to see if there is something that I can do)
 * While studying Kivy Designer, I had found a lot of bugs and had some ideas to new improvements; [Everything is listed here](https://github.com/aron-bordin/kivy-designer/issues)
 
 
