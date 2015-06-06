@@ -47,6 +47,7 @@ from designer.new_dialog import NewProjectDialog, NEW_PROJECTS
 from designer.eventviewer import EventViewer
 from designer.uix.designer_action_items import DesignerActionButton
 from designer.help_dialog import HelpDialog, AboutDialog
+from designer.buildozer_spec_editor import BuildozerSpecEditor
 
 NEW_PROJECT_DIR_NAME = 'new_proj'
 NEW_TEMPLATES_DIR = 'new_templates'
@@ -59,6 +60,10 @@ class Designer(FloatLayout):
 
     designer_console = ObjectProperty(None)
     '''Instance of :class:`designer.designer_console.ConsoleDialog`
+    '''
+
+    spec_editor = ObjectProperty(None)
+    '''Instance of :class:`designer.buildozer_spec_editor.BuildozerSpecEditor`
     '''
 
     statusbar = ObjectProperty(None)
@@ -674,6 +679,7 @@ class Designer(FloatLayout):
                                             (str(e)))
 
         self.ui_creator.playground.sandbox.error_active = False
+        self.spec_editor = BuildozerSpecEditor()
 
     def _cancel_popup(self, *args):
         '''EventHandler for all self._popup when self._popup.content
